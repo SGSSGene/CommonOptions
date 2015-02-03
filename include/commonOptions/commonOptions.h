@@ -87,45 +87,16 @@ public:
 		return value->value;
 	}
 };
-template<typename T>
-class Switch {
-private:
-	std::shared_ptr<OptionDescription<T>> value;
+class Switch : public Option<bool> {
 public:
-	Switch(std::string const& _name, T const& _default = T(), std::string const& _description = std::string("no description")) {
-
-		auto& map = AllOptions::getOptionDescriptionMap<T>();
-		if (map[_name] == nullptr) {
-			map[_name] = std::make_shared<OptionDescription<T>>();
-			map[_name]->optionName   = _name;
-			map[_name]->description  = _description;
-			map[_name]->defaultValue = _default;
-			map[_name]->value        = _default;
-		}
-		value = map[_name];
-		AllOptions::parseMap()[_name] = [&](std::string const& _name) {
-			std::stringstream ss;
-			ss<<_name;
-			ss>>value->value;
-		};
-		AllOptions::printMap()[_name] = [=]() {
-			std::stringstream ss;
-			ss<<"--"<<value->optionName<<" "<<value->defaultValue;
-			while(ss.str().length() < 32) {
-				ss<<" ";
-			}
-			ss<<value->description;
-			std::cout<<ss.str()<<std::endl;
-		};
+	Switch(std::string const& _name, std::string const& _description = std::string("no description"))
+		: Option(_name, false, _description) {
 		AllOptions::parseParaMap()[_name] = false;
 
 	}
 
-	T const* operator->() const {
-		return &value->value;
-	}
-	T const& operator*() const {
-		return value->value;
+	operator bool() {
+		return **this;
 	}
 };
 
