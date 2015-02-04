@@ -31,6 +31,10 @@ public:
 		static std::map<std::string, std::function<void(std::string const&)>> map;
 		return map;
 	}
+	static std::map<std::string, std::function<void()>>& postParseMap() {
+		static std::map<std::string, std::function<void()>> map;
+		return map;
+	}
 	static std::map<std::string, std::function<void()>>& printMap() {
 		static std::map<std::string, std::function<void()>> map;
 		return map;
@@ -52,7 +56,11 @@ class Option {
 private:
 	std::shared_ptr<OptionDescription<T>> value;
 public:
-	Option(std::string const& _name, T const& _default, std::string const& _description) {
+	Option(std::string const& _name, T const& _default, std::string const& _description)
+		: Option(_name, _default, _description, [](T const&){}) {
+	}
+
+	Option(std::string const& _name, T const& _default, std::string const& _description, std::function<void(T const&)> _func) {
 
 		auto& map = AllOptions::getOptionDescriptionMap<T>();
 		if (map[_name] == nullptr) {
@@ -78,6 +86,7 @@ public:
 			std::cout<<ss.str()<<std::endl;
 		};
 		AllOptions::parseParaMap()[_name] = true;
+		AllOptions::postParseMap()[_name] = [this, _func]() { _func(value->value); };
 	}
 
 	T const* operator->() const {
@@ -90,10 +99,14 @@ public:
 class Switch : public Option<bool> {
 public:
 	Switch(std::string const& _name, std::string const& _description)
+		: Switch(_name, _description, []() {}) {
+	}
+	Switch(std::string const& _name, std::string const& _description, std::function<void()> _func)
 		: Option(_name, false, _description) {
 		AllOptions::parseParaMap()[_name] = false;
-
+		AllOptions::postParseMap()[_name] = _func;
 	}
+
 
 	operator bool() {
 		return **this;
@@ -128,6 +141,7 @@ inline void parse(int argc, char const* const* argv) {
 				std::string key   = arg.substr(0, equalSignPos);
 				std::string value = arg.substr(equalSignPos+1);
 				AllOptions::parseMap()[key](value);
+				AllOptions::postParseMap()[key]();
 			} else if (i+1 < argc
 					   && std::string(argv[i+1]).compare(0, 2, "--") != 0) {
 				std::string key   = arg;
@@ -135,12 +149,15 @@ inline void parse(int argc, char const* const* argv) {
 				if (AllOptions::parseParaMap().at(key)) {
 					std::string value = argv[i+1];
 					AllOptions::parseMap()[key](value);
+					AllOptions::postParseMap()[key]();
 					++i;
 				} else {
 					AllOptions::parseMap()[key]("1");
 				}
 			} else {
 				AllOptions::parseMap()[arg]("1");
+				AllOptions::postParseMap()[arg]();
+
 			}
 		}
 	}
