@@ -52,7 +52,7 @@ class Option {
 private:
 	std::shared_ptr<OptionDescription<T>> value;
 public:
-	Option(std::string const& _name, T const& _default = T(), std::string const& _description = std::string("no description")) {
+	Option(std::string const& _name, T const& _default, std::string const& _description) {
 
 		auto& map = AllOptions::getOptionDescriptionMap<T>();
 		if (map[_name] == nullptr) {
@@ -89,7 +89,7 @@ public:
 };
 class Switch : public Option<bool> {
 public:
-	Switch(std::string const& _name, std::string const& _description = std::string("no description"))
+	Switch(std::string const& _name, std::string const& _description)
 		: Option(_name, false, _description) {
 		AllOptions::parseParaMap()[_name] = false;
 

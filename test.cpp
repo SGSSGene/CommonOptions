@@ -2,9 +2,9 @@
 #include <iostream>
 
 namespace {
-	commonOptions::Option<std::string> optString("str");
-	commonOptions::Option<int>         optInt("int");
-	commonOptions::Switch              swtHelp("help");
+	commonOptions::Option<std::string> optString("str", "default", "no-description");
+	commonOptions::Option<int>         optInt("int", 5, "no-description");
+	commonOptions::Switch              swtHelp("help", "no-description");
 }
 
 
