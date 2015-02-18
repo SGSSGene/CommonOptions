@@ -4,8 +4,10 @@
 #include <iostream>
 #include <map>
 #include <memory>
+#include <set>
 #include <string>
 #include <sstream>
+#include <vector>
 
 namespace commonOptions {
 
@@ -20,6 +22,7 @@ struct OptionDescription {
 template<typename T>
 using OptionDescriptionMap = std::map<std::string, std::shared_ptr<OptionDescription<T>>>;
 
+enum class ParaType { None, One, Multi };
 class AllOptions {
 public:
 	template<typename T>
@@ -31,6 +34,11 @@ public:
 		static std::map<std::string, std::function<void(std::string const&)>> map;
 		return map;
 	}
+	static std::map<std::string, std::function<void()>>& preParseMap() {
+		static std::map<std::string, std::function<void()>> map;
+		return map;
+	}
+
 	static std::map<std::string, std::function<void()>>& postParseMap() {
 		static std::map<std::string, std::function<void()>> map;
 		return map;
@@ -39,9 +47,8 @@ public:
 		static std::map<std::string, std::function<void()>> map;
 		return map;
 	}
-
-	static std::map<std::string, bool>& parseParaMap() {
-		static std::map<std::string, bool> map;
+	static std::map<std::string, ParaType>& parseParaMap() {
+		static std::map<std::string, ParaType> map;
 		return map;
 	}
 
@@ -85,7 +92,8 @@ public:
 			ss<<value->description;
 			std::cout<<ss.str()<<std::endl;
 		};
-		AllOptions::parseParaMap()[_name] = true;
+		AllOptions::parseParaMap()[_name] = ParaType::One;
+		AllOptions::preParseMap()[_name] = []() {};
 		AllOptions::postParseMap()[_name] = [this, _func]() { _func(value->value); };
 	}
 
@@ -96,6 +104,112 @@ public:
 		return value->value;
 	}
 };
+template<typename T>
+class Option<std::vector<T>> {
+private:
+	std::shared_ptr<OptionDescription<std::vector<T>>> value;
+public:
+	Option(std::string const& _name, std::vector<T> const& _default, std::string const& _description)
+		: Option(_name, _default, _description, [](std::vector<T> const&){}) {
+	}
+
+	Option(std::string const& _name, std::vector<T> const& _default, std::string const& _description, std::function<void(std::vector<T> const&)> _func) {
+
+		auto& map = AllOptions::getOptionDescriptionMap<std::vector<T>>();
+		if (map[_name] == nullptr) {
+			map[_name] = std::make_shared<OptionDescription<std::vector<T>>>();
+			map[_name]->optionName   = _name;
+			map[_name]->description  = _description;
+			map[_name]->defaultValue = _default;
+			map[_name]->value        = _default;
+		}
+		value = map[_name];
+		AllOptions::parseMap()[_name] = [&](std::string const& _name) {
+			std::stringstream ss;
+			ss<<_name;
+			T t;
+			ss>>t;
+			value->value.push_back(t);
+		};
+		AllOptions::printMap()[_name] = [=]() {
+			std::stringstream ss;
+			ss<<"--"<<value->optionName<<" { ";
+			for (auto const& v : value->defaultValue) {
+				ss << v << ", ";
+			}
+			ss<<"}";
+			while(ss.str().length() < 32) {
+				ss<<" ";
+			}
+			ss<<value->description;
+			std::cout<<ss.str()<<std::endl;
+		};
+		AllOptions::parseParaMap()[_name] = ParaType::Multi;
+		AllOptions::preParseMap()[_name] = [&]() { value->value.clear(); };
+		AllOptions::postParseMap()[_name] = [this, _func]() { _func(value->value); };
+	}
+
+	std::vector<T> const* operator->() const {
+		return &value->value;
+	}
+	std::vector<T> const& operator*() const {
+		return value->value;
+	}
+};
+template<typename T>
+class Option<std::set<T>> {
+private:
+	std::shared_ptr<OptionDescription<std::set<T>>> value;
+public:
+	Option(std::string const& _name, std::set<T> const& _default, std::string const& _description)
+		: Option(_name, _default, _description, [](std::set<T> const&){}) {
+	}
+
+	Option(std::string const& _name, std::set<T> const& _default, std::string const& _description, std::function<void(std::set<T> const&)> _func) {
+
+		auto& map = AllOptions::getOptionDescriptionMap<std::set<T>>();
+		if (map[_name] == nullptr) {
+			map[_name] = std::make_shared<OptionDescription<std::set<T>>>();
+			map[_name]->optionName   = _name;
+			map[_name]->description  = _description;
+			map[_name]->defaultValue = _default;
+			map[_name]->value        = _default;
+		}
+		value = map[_name];
+		AllOptions::parseMap()[_name] = [&](std::string const& _name) {
+			std::stringstream ss;
+			ss<<_name;
+			T t;
+			ss>>t;
+			value->value.push_back(t);
+		};
+		AllOptions::printMap()[_name] = [=]() {
+			std::stringstream ss;
+			ss<<"--"<<value->optionName<<" { ";
+			for (auto const& v : value->defaultValue) {
+				ss << v << ", ";
+			}
+			ss<<"}";
+			while(ss.str().length() < 32) {
+				ss<<" ";
+			}
+			ss<<value->description;
+			std::cout<<ss.str()<<std::endl;
+		};
+		AllOptions::parseParaMap()[_name] = ParaType::Multi;
+		AllOptions::preParseMap()[_name] = [&]() { value->value.clear(); };
+		AllOptions::postParseMap()[_name] = [this, _func]() { _func(value->value); };
+	}
+
+	std::set<T> const* operator->() const {
+		return &value->value;
+	}
+	std::set<T> const& operator*() const {
+		return value->value;
+	}
+};
+
+
 class Switch : public Option<bool> {
 public:
 	Switch(std::string const& _name, std::string const& _description)
@@ -103,7 +217,8 @@ public:
 	}
 	Switch(std::string const& _name, std::string const& _description, std::function<void()> _func)
 		: Option(_name, false, _description) {
-		AllOptions::parseParaMap()[_name] = false;
+		AllOptions::parseParaMap()[_name] = ParaType::None;
+		AllOptions::preParseMap()[_name] = []() {};
 		AllOptions::postParseMap()[_name] = _func;
 	}
 
@@ -140,14 +255,25 @@ inline void parse(int argc, char const* const* argv) {
 			if (equalSignPos != std::string::npos) {
 				std::string key   = arg.substr(0, equalSignPos);
 				std::string value = arg.substr(equalSignPos+1);
+				AllOptions::preParseMap()[key]();
 				AllOptions::parseMap()[key](value);
+				AllOptions::postParseMap()[key]();
+			} else if (AllOptions::parseParaMap().at(arg) == ParaType::Multi) {
+				std::string key   = arg.substr(0, equalSignPos);
+				AllOptions::preParseMap()[key]();
+				while (i+1 < argc && std::string(argv[i+1]).compare(0, 2, "--") != 0) {
+					std::string value = argv[i+1];
+					AllOptions::parseMap()[key](value);
+					++i;
+				}
 				AllOptions::postParseMap()[key]();
 			} else if (i+1 < argc
 					   && std::string(argv[i+1]).compare(0, 2, "--") != 0) {
 				std::string key   = arg;
 
-				if (AllOptions::parseParaMap().at(key)) {
+				if (AllOptions::parseParaMap().at(key) == ParaType::One) {
 					std::string value = argv[i+1];
+					AllOptions::preParseMap()[key]();
 					AllOptions::parseMap()[key](value);
 					AllOptions::postParseMap()[key]();
 					++i;
@@ -155,6 +281,7 @@ inline void parse(int argc, char const* const* argv) {
 					AllOptions::parseMap()[key]("1");
 				}
 			} else {
+				AllOptions::preParseMap()[arg]();
 				AllOptions::parseMap()[arg]("1");
 				AllOptions::postParseMap()[arg]();
 
