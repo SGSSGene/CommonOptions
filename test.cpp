@@ -18,7 +18,11 @@ namespace {
 // Example call3: ./test --str=halloWelt
 // Example call4: ./test --int 5
 int main(int argc, char** args) {
-	commonOptions::parse(argc, args);
+	if (not commonOptions::parse(argc, args)) {
+		commonOptions::print();
+		exit(0);
+	}
+
 
 	std::cout<<*optString<<std::endl;
 	std::cout<<*optInt<<std::endl;

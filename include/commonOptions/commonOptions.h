@@ -212,6 +212,10 @@ public:
 		return value->value;
 	}
 };
+inline bool& hasError() {
+	static bool error{false};
+	return error;
+}
 
 
 class Switch : public Option<bool> {
@@ -250,7 +254,7 @@ inline void print() {
  *  it will ignore everything else on the command line. This is needed because boost::
  *  program_options is handling unknown options very badly
  */
-inline void parse(int argc, char const* const* argv) {
+inline bool parse(int argc, char const* const* argv) {
 	std::map<std::string, std::string> options;
 
 	for (int i(0); i<argc; ++i) {
@@ -263,9 +267,16 @@ inline void parse(int argc, char const* const* argv) {
 			if (equalSignPos != std::string::npos) {
 				std::string key   = arg.substr(0, equalSignPos);
 				std::string value = arg.substr(equalSignPos+1);
+
+				if (AllOptions::parseParaMap().find(key) == AllOptions::parseParaMap().end()) {
+					hasError() = true;
+					continue;
+				}
 				AllOptions::preParseMap()[key]();
 				AllOptions::parseMap()[key](value);
 				AllOptions::postParseMap()[key]();
+			} else if (AllOptions::parseParaMap().find(arg) == AllOptions::parseParaMap().end()) {
+				hasError() = true;
 			} else if (AllOptions::parseParaMap().at(arg) == ParaType::Multi) {
 				std::string key   = arg.substr(0, equalSignPos);
 				AllOptions::preParseMap()[key]();
@@ -296,6 +307,7 @@ inline void parse(int argc, char const* const* argv) {
 			}
 		}
 	}
+	return not hasError();
 }
 
 }
