@@ -1,6 +1,7 @@
 #ifndef COMMANDLINEPARSER_COMMANDLINEPARSER_H
 #define COMMANDLINEPARSER_COMMANDLINEPARSER_H
 
+#include <algorithm>
 #include <iostream>
 #include <map>
 #include <memory>
@@ -67,7 +68,8 @@ public:
 		: Option(_name, _default, _description, [](T const&){}) {
 	}
 
-	Option(std::string const& _name, T const& _default, std::string const& _description, std::function<void(T const&)> _func) {
+	Option(std::string _name, T const& _default, std::string const& _description, std::function<void(T const&)> _func) {
+		std::transform(_name.begin(), _name.end(), _name.begin(), ::tolower);
 
 		auto& map = AllOptions::getOptionDescriptionMap<T>();
 		if (map[_name] == nullptr) {
@@ -113,7 +115,8 @@ public:
 		: Option(_name, _default, _description, [](std::vector<T> const&){}) {
 	}
 
-	Option(std::string const& _name, std::vector<T> const& _default, std::string const& _description, std::function<void(std::vector<T> const&)> _func) {
+	Option(std::string _name, std::vector<T> const& _default, std::string const& _description, std::function<void(std::vector<T> const&)> _func) {
+		std::transform(_name.begin(), _name.end(), _name.begin(), ::tolower);
 
 		auto& map = AllOptions::getOptionDescriptionMap<std::vector<T>>();
 		if (map[_name] == nullptr) {
@@ -165,7 +168,8 @@ public:
 		: Option(_name, _default, _description, [](std::set<T> const&){}) {
 	}
 
-	Option(std::string const& _name, std::set<T> const& _default, std::string const& _description, std::function<void(std::set<T> const&)> _func) {
+	Option(std::string _name, std::set<T> const& _default, std::string const& _description, std::function<void(std::set<T> const&)> _func) {
+		std::transform(_name.begin(), _name.end(), _name.begin(), ::tolower);
 
 		auto& map = AllOptions::getOptionDescriptionMap<std::set<T>>();
 		if (map[_name] == nullptr) {
@@ -215,8 +219,10 @@ public:
 	Switch(std::string const& _name, std::string const& _description)
 		: Switch(_name, _description, []() {}) {
 	}
-	Switch(std::string const& _name, std::string const& _description, std::function<void()> _func)
+	Switch(std::string _name, std::string const& _description, std::function<void()> _func)
 		: Option(_name, false, _description) {
+		std::transform(_name.begin(), _name.end(), _name.begin(), ::tolower);
+
 		AllOptions::parseParaMap()[_name] = ParaType::None;
 		AllOptions::preParseMap()[_name] = []() {};
 		AllOptions::postParseMap()[_name] = _func;
@@ -251,6 +257,8 @@ inline void parse(int argc, char const* const* argv) {
 		std::string arg = argv[i];
 		if (0 == arg.compare(0, 2, "--")) {
 			arg = arg.substr(2); // cut of first two symbols
+			std::transform(arg.begin(), arg.end(), arg.begin(), ::tolower);
+
 			size_t equalSignPos = arg.find("=");
 			if (equalSignPos != std::string::npos) {
 				std::string key   = arg.substr(0, equalSignPos);
