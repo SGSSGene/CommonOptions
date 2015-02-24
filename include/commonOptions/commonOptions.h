@@ -113,7 +113,6 @@ public:
 					}
 				}
 				if (not foundValue) {
-					auto& map = AllOptions::getOptionDescriptionMap<T>();
 					std::cerr<<"Wrong option: "<<name<<" doesn't accept: "<<_value<<std::endl;
 					return false;
 				}
