@@ -10,6 +10,7 @@ namespace {
 		commonOptions::print();
 		exit(0);
 	});
+	commonOptions::Option<std::string> optStringOpt("strstr", "option1", {"option1", "option2"}, "an option, with 2 possible values");
 }
 
 
@@ -29,6 +30,7 @@ int main(int argc, char** args) {
 	for (auto const& v : *optIntVector) {
 		std::cout<<v<<std::endl;
 	}
+	std::cout<<*optStringOpt<<std::endl;
 	return 0;
 }
 

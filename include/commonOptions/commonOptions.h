@@ -31,8 +31,8 @@ public:
 		static OptionDescriptionMap<T> map;
 		return map;
 	}
-	static std::map<std::string, std::function<void(std::string const&)>>& parseMap() {
-		static std::map<std::string, std::function<void(std::string const&)>> map;
+	static std::map<std::string, std::function<bool(std::string const&)>>& parseMap() {
+		static std::map<std::string, std::function<bool(std::string const&)>> map;
 		return map;
 	}
 	static std::map<std::string, std::function<void()>>& preParseMap() {
@@ -62,13 +62,28 @@ public:
 template<typename T>
 class Option {
 private:
+	std::string name;
 	std::shared_ptr<OptionDescription<T>> value;
+	bool        onlyPossibleValues;
+	std::set<T> possibleValues;
 public:
 	Option(std::string const& _name, T const& _default, std::string const& _description)
-		: Option(_name, _default, _description, [](T const&){}) {
+		: Option(_name, _default, {}, _description, [](T const&){}) {
+	}
+	Option(std::string const& _name, T const& _default, std::set<T> const& _list, std::string const& _description)
+		: Option(_name, _default, _list, _description, [](T const&){}) {
+	}
+	Option(std::string _name, T const& _default, std::string const& _description, std::function<void(T const&)> _func)
+		: Option(_name, _default, {}, _description, _func) {
 	}
 
-	Option(std::string _name, T const& _default, std::string const& _description, std::function<void(T const&)> _func) {
+
+	Option(std::string _name, T const& _default, std::set<T> const& _list, std::string const& _description, std::function<void(T const&)> _func)
+		: name(_name) {
+		onlyPossibleValues = not _list.empty();
+		possibleValues = _list;
+		possibleValues.insert(_default);
+
 		std::transform(_name.begin(), _name.end(), _name.begin(), ::tolower);
 
 		auto& map = AllOptions::getOptionDescriptionMap<T>();
@@ -80,10 +95,25 @@ public:
 			map[_name]->value        = _default;
 		}
 		value = map[_name];
-		AllOptions::parseMap()[_name] = [&](std::string const& _name) {
+		AllOptions::parseMap()[_name] = [&](std::string const& _value) {
 			std::stringstream ss;
-			ss<<_name;
+			ss<<_value;
 			ss>>value->value;
+			if (onlyPossibleValues) {
+				bool foundValue {false};
+				for (auto const& s : possibleValues) {
+					if (value->value == s) {
+						foundValue = true;
+						break;
+					}
+				}
+				if (not foundValue) {
+					auto& map = AllOptions::getOptionDescriptionMap<T>();
+					std::cerr<<"Wrong option: "<<name<<" doesn't accept: "<<_value<<std::endl;
+					return false;
+				}
+			}
+			return true;
 		};
 		AllOptions::printMap()[_name] = [=]() {
 			std::stringstream ss;
@@ -127,12 +157,13 @@ public:
 			map[_name]->value        = _default;
 		}
 		value = map[_name];
-		AllOptions::parseMap()[_name] = [&](std::string const& _name) {
+		AllOptions::parseMap()[_name] = [&](std::string const& _value) {
 			std::stringstream ss;
-			ss<<_name;
+			ss<<_value;
 			T t;
 			ss>>t;
 			value->value.push_back(t);
+			return false;
 		};
 		AllOptions::printMap()[_name] = [=]() {
 			std::stringstream ss;
@@ -273,7 +304,9 @@ inline bool parse(int argc, char const* const* argv) {
 					continue;
 				}
 				AllOptions::preParseMap()[key]();
-				AllOptions::parseMap()[key](value);
+				if (not AllOptions::parseMap()[key](value)) {
+					hasError() = true;
+				}
 				AllOptions::postParseMap()[key]();
 			} else if (AllOptions::parseParaMap().find(arg) == AllOptions::parseParaMap().end()) {
 				hasError() = true;
@@ -282,7 +315,9 @@ inline bool parse(int argc, char const* const* argv) {
 				AllOptions::preParseMap()[key]();
 				while (i+1 < argc && std::string(argv[i+1]).compare(0, 2, "--") != 0) {
 					std::string value = argv[i+1];
-					AllOptions::parseMap()[key](value);
+					if (not AllOptions::parseMap()[key](value)) {
+						hasError() = true;
+					}
 					++i;
 				}
 				AllOptions::postParseMap()[key]();
@@ -293,15 +328,21 @@ inline bool parse(int argc, char const* const* argv) {
 				if (AllOptions::parseParaMap().at(key) == ParaType::One) {
 					std::string value = argv[i+1];
 					AllOptions::preParseMap()[key]();
-					AllOptions::parseMap()[key](value);
+					if (not AllOptions::parseMap()[key](value)) {
+						hasError() = true;
+					}
 					AllOptions::postParseMap()[key]();
 					++i;
 				} else {
-					AllOptions::parseMap()[key]("1");
+					if (not AllOptions::parseMap()[key]("1")) {
+						hasError() = true;
+					}
 				}
 			} else {
 				AllOptions::preParseMap()[arg]();
-				AllOptions::parseMap()[arg]("1");
+				if (not AllOptions::parseMap()[arg]("1")) {
+					hasError() = true;
+				}
 				AllOptions::postParseMap()[arg]();
 
 			}
