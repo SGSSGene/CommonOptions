@@ -306,10 +306,6 @@ inline void printShellCompl() {
  *  program_options is handling unknown options very badly
  */
 inline bool parse(int argc, char const* const* argv) {
-	if (argc == 2 && std::string(argv[1]) == "__completion") {
-		printShellCompl();
-		exit(0);
-	}
 	std::map<std::string, std::string> options;
 
 	for (int i(0); i<argc; ++i) {
@@ -372,6 +368,11 @@ inline bool parse(int argc, char const* const* argv) {
 			}
 		}
 	}
+	if (argc == 2 && std::string(argv[1]) == "__completion") {
+		printShellCompl();
+		exit(0);
+	}
+
 	return not hasError();
 }
 
