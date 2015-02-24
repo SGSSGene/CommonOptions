@@ -48,6 +48,11 @@ public:
 		static std::map<std::string, std::function<void()>> map;
 		return map;
 	}
+	static std::map<std::string, std::function<void()>>& printShellComplMap() {
+		static std::map<std::string, std::function<void()>> map;
+		return map;
+	}
+
 	static std::map<std::string, ParaType>& parseParaMap() {
 		static std::map<std::string, ParaType> map;
 		return map;
@@ -124,6 +129,10 @@ public:
 			ss<<value->description;
 			std::cout<<ss.str()<<std::endl;
 		};
+		AllOptions::printShellComplMap()[_name] = [=]() {
+			std::cout<<"--"<<value->optionName<<" ";
+		};
+
 		AllOptions::parseParaMap()[_name] = ParaType::One;
 		AllOptions::preParseMap()[_name] = []() {};
 		AllOptions::postParseMap()[_name] = [this, _func]() { _func(value->value); };
@@ -178,6 +187,10 @@ public:
 			ss<<value->description;
 			std::cout<<ss.str()<<std::endl;
 		};
+		AllOptions::printShellComplMap()[_name] = [=]() {
+			std::cout<<"--"<<value->optionName<<" ";
+		};
+
 		AllOptions::parseParaMap()[_name] = ParaType::Multi;
 		AllOptions::preParseMap()[_name] = [&]() { value->value.clear(); };
 		AllOptions::postParseMap()[_name] = [this, _func]() { _func(value->value); };
@@ -231,6 +244,9 @@ public:
 			ss<<value->description;
 			std::cout<<ss.str()<<std::endl;
 		};
+		AllOptions::printShellComplMap()[_name] = [=]() {
+			std::cout<<"--"<<value->optionName<<" ";
+		};
 		AllOptions::parseParaMap()[_name] = ParaType::Multi;
 		AllOptions::preParseMap()[_name] = [&]() { value->value.clear(); };
 		AllOptions::postParseMap()[_name] = [this, _func]() { _func(value->value); };
@@ -271,6 +287,11 @@ public:
 
 inline void print() {
 	for (auto f : AllOptions::printMap()) {
+		f.second();
+	}
+}
+inline void printShellCompl() {
+	for (auto f : AllOptions::printShellComplMap()) {
 		f.second();
 	}
 }

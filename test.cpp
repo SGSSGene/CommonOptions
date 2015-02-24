@@ -10,6 +10,10 @@ namespace {
 		commonOptions::print();
 		exit(0);
 	});
+	commonOptions::Switch              swtCompl("compl", "no description", []() {
+		commonOptions::printShellCompl();
+		exit(0);
+	});
 	commonOptions::Option<std::string> optStringOpt("strstr", "option1", {"option1", "option2"}, "an option, with 2 possible values");
 }
 
