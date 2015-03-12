@@ -171,7 +171,7 @@ public:
 			T t;
 			ss>>t;
 			value->value.push_back(t);
-			return false;
+			return true;
 		};
 		AllOptions::printMap()[_name] = [=]() {
 			std::stringstream ss;
