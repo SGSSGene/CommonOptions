@@ -1,6 +1,6 @@
 # CommonOptions
 
-Parsing of (simple) command line options
+Parsing of (simple) command line options. Can be used with aBuild.
 
 ## Defining Parameters
 ```c

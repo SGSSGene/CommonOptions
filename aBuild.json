@@ -1,0 +1,11 @@
+{
+	"name": "CommonOptions",
+	"projects": [
+		{ "path": "commonOptions",
+			"type": "library"
+		},
+		{ "path": "test",
+			"type": "executable"
+		}
+	]
+}
