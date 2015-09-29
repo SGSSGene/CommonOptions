@@ -121,7 +121,10 @@ public:
 		};
 		AllOptions::printMap()[_name] = [=]() {
 			std::stringstream ss;
-			ss<<"--"<<value->optionName<<" "<<value->defaultValue;
+			ss<<"--"<<value->optionName;
+			if (AllOptions::parseParaMap()[_name] != ParaType::None) {
+				ss<<" "<<value->defaultValue;
+			}
 			while(ss.str().length() < 32) {
 				ss<<" ";
 			}
