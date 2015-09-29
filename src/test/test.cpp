@@ -3,14 +3,14 @@
 #include <vector>
 
 namespace {
-	commonOptions::Option<std::string> optString("str", "default", "no description");
-	commonOptions::Option<int>         optInt("int", 5, "no description");
-	commonOptions::Option<std::vector<int>> optIntVector("intVec", {0, 2}, "no description for int Vec");
-	commonOptions::Switch              swtHelp("help", "no description", []() {
+	auto optString    = commonOptions::make_option("str", "default", "no description");
+	auto optInt       = commonOptions::make_option("int", 5,         "no description");
+	auto optIntVector = commonOptions::make_option<int>("intVec", {0, 2}, "no description for int Vec");
+	auto swtHelp      = commonOptions::make_switch("help", "no description", [] {
 		commonOptions::print();
 		exit(0);
 	});
-	commonOptions::Option<std::string> optStringOpt("strstr", "option1", {"option1", "option2"}, "an option, with 2 possible values");
+	auto optStringOpt = commonOptions::make_option<std::string>("strstr", "option1", {"option1", "option2"}, "an option, with 2 possible values");
 }
 
 
