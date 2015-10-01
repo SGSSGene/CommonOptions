@@ -4,8 +4,18 @@
 		{ "path": "commonOptions",
 			"type": "library"
 		},
-		{ "path": "test",
-			"type": "executable"
+		{ "path": "testSimpleOption",
+		 "type": "executable"
+		},
+		{ "path": "testMultiOption",
+		 "type": "executable"
+		},
+		{ "path": "testSwitch",
+		 "type": "executable"
+		},
+		{ "path": "testHelp",
+		 "type": "executable"
 		}
+
 	]
 }
