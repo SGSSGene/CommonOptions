@@ -8,8 +8,8 @@
 #include <vector>
 
 namespace {
-	auto optPara1 = commonOptions::make_option<int>        ("para1", std::vector<int>{}, "this takes multiple strings as arguments");
-	auto optPara2 = commonOptions::make_option<std::string>("para2", {}, "this takes multiple strings as arguments");
+	auto optPara1 = commonOptions::make_multi_option<int>        ("para1", {}, "this takes multiple strings as arguments");
+	auto optPara2 = commonOptions::make_multi_option<std::string>("para2", {}, "this takes multiple strings as arguments");
 
 }
 
