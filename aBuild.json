@@ -1,20 +1,28 @@
 {
 	"name": "CommonOptions",
+	"extDependencies": [
+		{ "url": "git@78.47.95.250:aBuild/SelfTest" }
+	],
+
 	"projects": [
 		{ "path": "commonOptions",
 			"type": "library"
 		},
 		{ "path": "testSimpleOption",
-		 "type": "executable"
+		 "type": "executable",
+   		"dependencies": ["SelfTest/selfTest"]
 		},
 		{ "path": "testMultiOption",
-		 "type": "executable"
+		 "type": "executable",
+   		"dependencies": ["SelfTest/selfTest"]
 		},
 		{ "path": "testSwitch",
-		 "type": "executable"
+		 "type": "executable",
+   		"dependencies": ["SelfTest/selfTest"]
 		},
 		{ "path": "testHelp",
-		 "type": "executable"
+		 "type": "executable",
+   		"dependencies": ["SelfTest/selfTest"]
 		}
 
 	]

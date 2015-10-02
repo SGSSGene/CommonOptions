@@ -3,6 +3,7 @@
  * This examples shows how to use the help mechanism
  */
 #include "commonOptions/commonOptions.h"
+#include <selfTest/selfTest.h>
 #include <iostream>
 #include <vector>
 
@@ -13,6 +14,8 @@ namespace {
 }
 
 int main(int argc, char** argv) {
+	SELFTESTMAIN(argv); // Only for unittesting
+
 	/** Parse options, if something goes wrong print help message **/
 	if (not commonOptions::parse(argc, argv)) {
 		commonOptions::print();
@@ -25,4 +28,14 @@ int main(int argc, char** argv) {
 
 	return 0;
 }
+
+SELFTEST(Test1, "", 0, "", "")
+SELFTEST(Test2, "--invalid", 0, "--help                          prints this help\n"
+                                "--para1 0                       an option\n"
+                                "--para2                         just a simple switch\n", "")
+SELFTEST(Test3, "--help", 0, "--help                          prints this help\n"
+                             "--para1 0                       an option\n"
+                             "--para2                         just a simple switch\n", "")
+
+
 

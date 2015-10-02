@@ -4,6 +4,7 @@
  * multiple arguments
  */
 #include "commonOptions/commonOptions.h"
+#include <selfTest/selfTest.h>
 #include <iostream>
 #include <vector>
 
@@ -14,6 +15,8 @@ namespace {
 }
 
 int main(int argc, char** argv) {
+	SELFTESTMAIN(argv); // Only for unittesting
+
 	commonOptions::parse(argc, argv); // parsing options
 
 	// print options
@@ -27,4 +30,6 @@ int main(int argc, char** argv) {
 
 	return 0;
 }
+
+SELFTEST(Test1, "--para1 10 20 --para2 test hello", 0, "para1: 10\npara1: 20\npara2: test\npara2: hello\n", "")
 
