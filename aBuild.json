@@ -1,29 +1,36 @@
 {
-	"name": "CommonOptions",
-	"extDependencies": [
-		{ "url": "git@cakeface.de:aBuild/SelfTest" }
-	],
-
-	"projects": [
-		{ "path": "commonOptions",
-			"type": "library"
-		},
-		{ "path": "testSimpleOption",
-		 "type": "executable",
-   		"dependencies": ["SelfTest/selfTest"]
-		},
-		{ "path": "testMultiOption",
-		 "type": "executable",
-   		"dependencies": ["SelfTest/selfTest"]
-		},
-		{ "path": "testSwitch",
-		 "type": "executable",
-   		"dependencies": ["SelfTest/selfTest"]
-		},
-		{ "path": "testHelp",
-		 "type": "executable",
-   		"dependencies": ["SelfTest/selfTest"]
-		}
-
-	]
+   "extDependencies" : [
+      {
+         "url" : "git@cakeface.de:aBuild/SelfTest"
+      }
+   ],
+   "name" : "CommonOptions",
+   "projects" : [
+      {
+         "path" : "commonOptions"
+      },
+      {
+         "dependencies" : [ "SelfTest/selfTest" ],
+         "path" : "testSimpleOption"
+      },
+      {
+         "dependencies" : [ "SelfTest/selfTest" ],
+         "path" : "testMultiOption"
+      },
+      {
+         "dependencies" : [ "SelfTest/selfTest" ],
+         "path" : "testSwitch"
+      },
+      {
+         "dependencies" : [ "SelfTest/selfTest" ],
+         "path" : "testHelp"
+      },
+      {
+         "dependencies" : [ "SelfTest/selfTest" ],
+         "path" : "testDuplicatedOption"
+      },
+      {
+         "path" : "test"
+      }
+   ]
 }
