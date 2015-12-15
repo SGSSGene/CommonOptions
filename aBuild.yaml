@@ -1,0 +1,21 @@
+name: CommonOptions
+extDependencies:
+  - url: git@cakeface.de:aBuild/SelfTest
+projects:
+  - path: commonOptions
+  - path: testSimpleOption
+    dependencies:
+      - SelfTest/selfTest
+  - path: testMultiOption
+    dependencies:
+      - SelfTest/selfTest
+  - path: testSwitch
+    dependencies:
+      - SelfTest/selfTest
+  - path: testHelp
+    dependencies:
+      - SelfTest/selfTest
+  - path: testDuplicatedOption
+    dependencies:
+      - SelfTest/selfTest
+  - path: test
