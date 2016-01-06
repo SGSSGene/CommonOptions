@@ -1,5 +1,9 @@
 #pragma once
 
+#include <string>
+#include <map>
+#include <memory>
+
 namespace commonOptions {
 
 /**

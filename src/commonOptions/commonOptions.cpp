@@ -100,4 +100,21 @@ bool parse(int argc, char const* const* argv) {
 	return not hasError();
 }
 
+Section* get_section(std::string const& _str) {
+	auto path = splitPath(_str);
+	Section* section = getRootSection();
+	std::cout<<_str<<std::endl;
+	for (auto const& p : path) {
+		section = section->accessChild(p);
+		std::cout << p << std::endl;
+	}
+	std::cout<<section->fullName() << std::endl;
+	return section;
+}
+Section* getRootSection() {
+	static Section singleton;
+	return &singleton;
+}
+
+
 }

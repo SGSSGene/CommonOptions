@@ -2,6 +2,12 @@
 
 #include "AllOptions.h"
 
+#include <algorithm>
+#include <iostream>
+#include <set>
+#include <sstream>
+#include <vector>
+
 namespace commonOptions {
 
 /**

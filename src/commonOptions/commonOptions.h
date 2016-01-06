@@ -1,15 +1,8 @@
 #pragma once
 
-#include <algorithm>
-#include <iostream>
-#include <map>
-#include <memory>
-#include <set>
-#include <string>
-#include <sstream>
-#include <vector>
-
 #include "Switch.h"
+#include "Section.h"
+#include "utils.h"
 
 namespace commonOptions {
 
@@ -17,6 +10,10 @@ bool& hasError();
 void  print();
 void  printShellCompl();
 bool  parse(int argc, char const* const* argv);
+
+Section* get_section(std::string const& _str);
+
+Section* getRootSection();
 
 template<typename T>
 Option<T> make_option(std::string const& _str, T _default, std::string const& _description) {

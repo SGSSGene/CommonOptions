@@ -24,3 +24,8 @@ projects:
       - SelfTest/selfTest
       - CommonOptions/commonOptions
   - path: test
+  - path: testSection
+    dependencies:
+      - SelfTest/selfTest
+      - CommonOptions/commonOptions
+
