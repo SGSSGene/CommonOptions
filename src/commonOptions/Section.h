@@ -86,19 +86,3 @@ public:
 };
 
 }
-
-namespace commonOptions {
-	template<typename T>
-	std::string Option<T>::getSectionName() const {
-		return mSection->fullName();
-	}
-	template<typename T>
-	std::string Option<std::vector<T>>::getSectionName() const {
-		return mSection->fullName();
-	}
-	template<typename T>
-	std::string Option<std::set<T>>::getSectionName() const {
-		return mSection->fullName();
-	}
-
-}

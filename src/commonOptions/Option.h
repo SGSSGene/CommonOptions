@@ -1,6 +1,7 @@
 #pragma once
 
 #include "AllOptions.h"
+#include "BaseOption.h"
 
 #include <algorithm>
 #include <iostream>
@@ -16,10 +17,8 @@ class Section;
  * This type must be convertable by using stringstream
  */
 template<typename T>
-class Option {
+class Option : public BaseOption {
 private:
-	Section*    mSection;
-	std::string name;
 	std::shared_ptr<OptionDescription<T>> value;
 	bool        onlyPossibleValues;
 	std::set<T> possibleValues;
@@ -34,12 +33,9 @@ public:
 		: Option(_section, _name, _default, {}, _description, _func) {
 	}
 
-	std::string getSectionName() const;
-
 
 	Option(Section* _section, std::string _varName, T const& _default, std::set<T> const& _list, std::string const& _description, std::function<void(T const&)> _func)
-		: mSection(_section)
-		, name(_varName)
+		: BaseOption(_section, _varName)
 	{
 		onlyPossibleValues = not _list.empty();
 		possibleValues = _list;
@@ -70,7 +66,7 @@ public:
 					}
 				}
 				if (not foundValue) {
-					std::cerr<<"Wrong option: "<<name<<" doesn't accept: "<<_value<<std::endl;
+					std::cerr<<"Wrong option: "<<getName()<<" doesn't accept: "<<_value<<std::endl;
 					return false;
 				}
 			}
@@ -105,19 +101,16 @@ public:
 	}
 };
 template<typename T>
-class Option<std::vector<T>> {
+class Option<std::vector<T>> : public BaseOption {
 private:
-	Section* mSection;
 	std::shared_ptr<OptionDescription<std::vector<T>>> value;
 public:
 	Option(Section* _section, std::string const& _name, std::vector<T> const& _default, std::string const& _description)
 		: Option(_section, _name, _default, _description, [](std::vector<T> const&){}) {
 	}
 
-	std::string getSectionName() const;
-
 	Option(Section* _section, std::string _varName, std::vector<T> const& _default, std::string const& _description, std::function<void(std::vector<T> const&)> _func)
-		: mSection (_section)
+		: BaseOption(_section, _varName)
 	{
 		auto _name = getSectionName() + _varName;
 
@@ -170,18 +163,16 @@ public:
 	}
 };
 template<typename T>
-class Option<std::set<T>> {
+class Option<std::set<T>> : public BaseOption {
 private:
-	Section* mSection;
 	std::shared_ptr<OptionDescription<std::set<T>>> value;
 public:
 	Option(Section* _section, std::string const& _name, std::set<T> const& _default, std::string const& _description)
 		: Option(_section, _name, _default, _description, [](std::set<T> const&){}) {
 	}
-	std::string getSectionName() const;
 
 	Option(Section* _section, std::string _varName, std::set<T> const& _default, std::string const& _description, std::function<void(std::set<T> const&)> _func)
-		: mSection (_section)
+		: BaseOption(_section)
 	{
 		auto _name = getSectionName() + _varName;
 		std::transform(_name.begin(), _name.end(), _name.begin(), ::tolower);
