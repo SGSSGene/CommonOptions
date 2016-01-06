@@ -108,6 +108,8 @@ Section* get_section(std::string const& _str) {
 	}
 	return section;
 }
+
+
 Section* getRootSection() {
 	static Section singleton;
 	return &singleton;
