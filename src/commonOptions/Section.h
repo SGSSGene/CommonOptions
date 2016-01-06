@@ -38,14 +38,14 @@ public:
 		if (v.first != this) {
 			return v.first->make_option(v.second, _default, _selection, _description);
 		}
-		return Option<T>(fullName() + v.second, _default, _selection, _description);
+		return Option<T>(this, v.second, _default, _selection, _description);
 	}
 	auto make_option(std::string const& _str, char const* _default, std::set<std::string> const& _selection, std::string const& _description) -> Option<std::string> {
 		auto v = getSectionOfVariable(_str);
 		if (v.first != this) {
 			return v.first->make_option(v.second, _default, _selection, _description);
 		}
-		return Option<std::string>(fullName() + v.second, _default, _selection, _description);
+		return Option<std::string>(this, v.second, _default, _selection, _description);
 	}
 
 
@@ -55,15 +55,14 @@ public:
 		if (v.first != this) {
 			return v.first->make_option(v.second, _default, _description);
 		}
-		std::cout<<mName << " " << _str << " - " << fullName() + v.second<<std::endl;
-		return Option<T>(fullName() + v.second, _default, _description);
+		return Option<T>(this, v.second, _default, _description);
 	}
 	auto make_option(std::string const& _str, char const* _default, std::string const& _description) -> Option<std::string> {
 		auto v = getSectionOfVariable(_str);
 		if (v.first != this) {
 			return v.first->make_option(v.second, _default, _description);
 		}
-		return Option<std::string>(fullName() + v.second, _default, _description);
+		return Option<std::string>(this, v.second, _default, _description);
 	}
 
 
@@ -90,5 +89,21 @@ public:
 	}*/
 
 };
+
+}
+
+namespace commonOptions {
+	template<typename T>
+	std::string Option<T>::getSectionName() const {
+		return mSection->fullName();
+	}
+	template<typename T>
+	std::string Option<std::vector<T>>::getSectionName() const {
+		return mSection->fullName();
+	}
+	template<typename T>
+	std::string Option<std::set<T>>::getSectionName() const {
+		return mSection->fullName();
+	}
 
 }

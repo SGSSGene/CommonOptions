@@ -10,34 +10,42 @@
 
 namespace commonOptions {
 
+class Section;
+
 /**
  * This type must be convertable by using stringstream
  */
 template<typename T>
 class Option {
 private:
+	Section*    mSection;
 	std::string name;
 	std::shared_ptr<OptionDescription<T>> value;
 	bool        onlyPossibleValues;
 	std::set<T> possibleValues;
 public:
-	Option(std::string const& _name, T const& _default, std::string const& _description)
-		: Option(_name, _default, {}, _description, [](T const&){}) {
+	Option(Section* _section, std::string const& _name, T const& _default, std::string const& _description)
+		: Option(_section, _name, _default, {}, _description, [](T const&){}) {
 	}
-	Option(std::string const& _name, T const& _default, std::set<T> const& _list, std::string const& _description)
-		: Option(_name, _default, _list, _description, [](T const&){}) {
+	Option(Section* _section, std::string const& _name, T const& _default, std::set<T> const& _list, std::string const& _description)
+		: Option(_section, _name, _default, _list, _description, [](T const&){}) {
 	}
-	Option(std::string _name, T const& _default, std::string const& _description, std::function<void(T const&)> _func)
-		: Option(_name, _default, {}, _description, _func) {
+	Option(Section* _section, std::string _name, T const& _default, std::string const& _description, std::function<void(T const&)> _func)
+		: Option(_section, _name, _default, {}, _description, _func) {
 	}
 
+	std::string getSectionName() const;
 
-	Option(std::string _name, T const& _default, std::set<T> const& _list, std::string const& _description, std::function<void(T const&)> _func)
-		: name(_name) {
+
+	Option(Section* _section, std::string _varName, T const& _default, std::set<T> const& _list, std::string const& _description, std::function<void(T const&)> _func)
+		: mSection(_section)
+		, name(_varName)
+	{
 		onlyPossibleValues = not _list.empty();
 		possibleValues = _list;
 		possibleValues.insert(_default);
 
+		auto _name = getSectionName() + _varName;
 		std::transform(_name.begin(), _name.end(), _name.begin(), ::tolower);
 
 		auto& map = AllOptions::getOptionDescriptionMap<T>();
@@ -99,13 +107,20 @@ public:
 template<typename T>
 class Option<std::vector<T>> {
 private:
+	Section* mSection;
 	std::shared_ptr<OptionDescription<std::vector<T>>> value;
 public:
-	Option(std::string const& _name, std::vector<T> const& _default, std::string const& _description)
-		: Option(_name, _default, _description, [](std::vector<T> const&){}) {
+	Option(Section* _section, std::string const& _name, std::vector<T> const& _default, std::string const& _description)
+		: Option(_section, _name, _default, _description, [](std::vector<T> const&){}) {
 	}
 
-	Option(std::string _name, std::vector<T> const& _default, std::string const& _description, std::function<void(std::vector<T> const&)> _func) {
+	std::string getSectionName() const;
+
+	Option(Section* _section, std::string _varName, std::vector<T> const& _default, std::string const& _description, std::function<void(std::vector<T> const&)> _func)
+		: mSection (_section)
+	{
+		auto _name = getSectionName() + _varName;
+
 		std::transform(_name.begin(), _name.end(), _name.begin(), ::tolower);
 
 		auto& map = AllOptions::getOptionDescriptionMap<std::vector<T>>();
@@ -157,13 +172,18 @@ public:
 template<typename T>
 class Option<std::set<T>> {
 private:
+	Section* mSection;
 	std::shared_ptr<OptionDescription<std::set<T>>> value;
 public:
-	Option(std::string const& _name, std::set<T> const& _default, std::string const& _description)
-		: Option(_name, _default, _description, [](std::set<T> const&){}) {
+	Option(Section* _section, std::string const& _name, std::set<T> const& _default, std::string const& _description)
+		: Option(_section, _name, _default, _description, [](std::set<T> const&){}) {
 	}
+	std::string getSectionName() const;
 
-	Option(std::string _name, std::set<T> const& _default, std::string const& _description, std::function<void(std::set<T> const&)> _func) {
+	Option(Section* _section, std::string _varName, std::set<T> const& _default, std::string const& _description, std::function<void(std::set<T> const&)> _func)
+		: mSection (_section)
+	{
+		auto _name = getSectionName() + _varName;
 		std::transform(_name.begin(), _name.end(), _name.begin(), ::tolower);
 
 		auto& map = AllOptions::getOptionDescriptionMap<std::set<T>>();
