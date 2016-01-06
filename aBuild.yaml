@@ -6,16 +6,21 @@ projects:
   - path: testSimpleOption
     dependencies:
       - SelfTest/selfTest
+      - CommonOptions/commonOptions
   - path: testMultiOption
     dependencies:
       - SelfTest/selfTest
+      - CommonOptions/commonOptions
   - path: testSwitch
     dependencies:
       - SelfTest/selfTest
+      - CommonOptions/commonOptions
   - path: testHelp
     dependencies:
       - SelfTest/selfTest
+      - CommonOptions/commonOptions
   - path: testDuplicatedOption
     dependencies:
       - SelfTest/selfTest
+      - CommonOptions/commonOptions
   - path: test
