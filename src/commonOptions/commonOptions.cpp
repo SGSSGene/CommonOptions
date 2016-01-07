@@ -50,18 +50,15 @@ bool parse(int argc, char const* const* argv) {
 					hasError() = true;
 					continue;
 				}
-				baseOption->getPreParseFunction()();
 				if (not baseOption->getParseFunction()(value)) {
 					hasError() = true;
 				}
-				baseOption->getPostParseFunction()();
 			} else if (not get_option(arg)) {
 				hasError() = true;
 			} else if (get_option(arg)->getParaType() == ParaType::Multi) {
 				std::string key   = arg.substr(0, equalSignPos);
 				auto baseOption = get_option(key);
 
-				baseOption->getPreParseFunction()();
 				while (i+1 < argc && std::string(argv[i+1]).compare(0, 2, "--") != 0) {
 					std::string value = argv[i+1];
 					if (not baseOption->getParseFunction()(value)) {
@@ -69,7 +66,6 @@ bool parse(int argc, char const* const* argv) {
 					}
 					++i;
 				}
-				baseOption->getPostParseFunction()();
 			} else if (i+1 < argc
 					   && std::string(argv[i+1]).compare(0, 2, "--") != 0) {
 				std::string key   = arg;
@@ -79,11 +75,9 @@ bool parse(int argc, char const* const* argv) {
 					std::string value = argv[i+1];
 
 
-					baseOption->getPreParseFunction()();
 					if (not baseOption->getParseFunction()(value)) {
 						hasError() = true;
 					}
-					baseOption->getPostParseFunction()();
 					++i;
 				} else {
 					if (not baseOption->getParseFunction()("1")) {
@@ -93,11 +87,9 @@ bool parse(int argc, char const* const* argv) {
 			} else {
 				std::string key = arg;
 				auto baseOption = get_option(key);
-				baseOption->getPreParseFunction()();
 				if (not baseOption->getParseFunction()("1")) {
 					hasError() = true;
 				}
-				baseOption->getPostParseFunction()();
 			}
 		}
 	}

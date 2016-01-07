@@ -15,8 +15,6 @@ protected:
 	std::string mName;
 	ParaType    mParaType;
 	std::function<bool(std::string const&)> mParseFunction;
-	std::function<void()> mPreParseFunction;
-	std::function<void()> mPostParseFunction;
 
 public:
 	BaseOption(Section* _section, std::string const& _name, ParaType _paraType);
@@ -26,8 +24,6 @@ public:
 	auto getName() const -> std::string const&;
 	auto getParaType() const -> ParaType;
 	auto getParseFunction() const -> std::function<bool(std::string const&)>;
-	auto getPreParseFunction() const -> std::function<void()>;
-	auto getPostParseFunction() const -> std::function<void()>;
 
 	virtual void print() const = 0;
 	virtual void printShellCompl() const = 0;

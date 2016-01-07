@@ -12,8 +12,6 @@ BaseOption::BaseOption(Section* _section, std::string const& _name, ParaType _pa
 	, mParaType (_paraType)
 {
 	mParseFunction     = [](std::string const&) { return true; };
-	mPreParseFunction  = [] {};
-	mPostParseFunction = [] {};
 }
 
 BaseOption::~BaseOption() {
@@ -32,12 +30,6 @@ auto BaseOption::getParaType() const -> ParaType {
 }
 auto BaseOption::getParseFunction() const -> std::function<bool(std::string const&)> {
 	return mParseFunction;
-}
-auto BaseOption::getPreParseFunction() const -> std::function<void()> {
-	return mPreParseFunction;
-}
-auto BaseOption::getPostParseFunction() const -> std::function<void()> {
-	return mPostParseFunction;
 }
 
 }

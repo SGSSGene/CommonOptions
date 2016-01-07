@@ -27,7 +27,7 @@ public:
 	Option(Section* _section, std::string const& _name, T const& _default, std::string const& _description)
 		: Option(_section, _name, _default, {}, _description) {
 	}
-	Option(Section* _section, std::string _varName, T const& _default, std::set<T> const& _list, std::string const& _description)
+	Option(Section* _section, std::string const& _varName, T const& _default, std::set<T> const& _list, std::string const& _description)
 		: BaseOption(_section, _varName, commonOptions::getParaType<T>())
 	{
 		onlyPossibleValues = not _list.empty();
@@ -62,9 +62,6 @@ public:
 			}
 			return true;
 		};
-
-		mPreParseFunction = [] {};
-		mPostParseFunction = [] {};
 	}
 
 	T const* operator->() const {
@@ -96,11 +93,7 @@ class Option<std::vector<T>> : public BaseOption {
 private:
 	std::shared_ptr<OptionDescription<std::vector<T>>> mOptionDescription;
 public:
-	Option(Section* _section, std::string const& _name, std::vector<T> const& _default, std::string const& _description)
-		: Option(_section, _name, _default, _description, [](std::vector<T> const&){}) {
-	}
-
-	Option(Section* _section, std::string _varName, std::vector<T> const& _default, std::string const& _description, std::function<void(std::vector<T> const&)> _func)
+	Option(Section* _section, std::string const& _varName, std::vector<T> const& _default, std::string const& _description)
 		: BaseOption(_section, _varName, commonOptions::getParaType<std::vector<T>>())
 	{
 		auto _name = getSectionName() + _varName;
@@ -121,8 +114,6 @@ public:
 			mOptionDescription->value.push_back(t);
 			return true;
 		};
-		mPreParseFunction  = [&]() { mOptionDescription->value.clear(); };
-		mPostParseFunction = [this, _func]() { _func(mOptionDescription->value); };
 	}
 
 	std::vector<T> const* operator->() const {
@@ -154,11 +145,8 @@ class Option<std::set<T>> : public BaseOption {
 private:
 	std::shared_ptr<OptionDescription<std::set<T>>> mOptionDescription;
 public:
-	Option(Section* _section, std::string const& _name, std::set<T> const& _default, std::string const& _description)
-		: Option(_section, _name, _default, _description, [](std::set<T> const&){}) {
-	}
 
-	Option(Section* _section, std::string _varName, std::set<T> const& _default, std::string const& _description, std::function<void(std::set<T> const&)> _func)
+	Option(Section* _section, std::string const& _varName, std::set<T> const& _default, std::string const& _description)
 		: BaseOption(_section, _varName, commonOptions::getParaType<std::set<T>>())
 	{
 		auto _name = getSectionName() + _varName;
@@ -177,8 +165,6 @@ public:
 			ss>>t;
 			mOptionDescription->value.push_back(t);
 		};
-		mPreParseFunction  = [&]() { mOptionDescription->value.clear(); };
-		mPostParseFunction = [this, _func]() { _func(mOptionDescription->value); };
 	}
 
 	std::set<T> const* operator->() const {

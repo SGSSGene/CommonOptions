@@ -95,13 +95,13 @@ public:
 	}
 
 
-	auto make_switch(std::string const& _str, std::string const& _description, std::function<void()> const& _func) -> Switch& {
+	auto make_switch(std::string const& _str, std::string const& _description) -> Switch& {
 		auto v = getSectionOfVariable(_str);
 		if (v.first != this) {
-			return v.first->make_switch(v.second, _description, _func);
+			return v.first->make_switch(v.second, _description);
 		}
 		if (mVariables.find(v.second) == mVariables.end()) {
-			mVariables[v.second].reset(new Switch(this, v.second, _description, _func));
+			mVariables[v.second].reset(new Switch(this, v.second, _description));
 		}
 		return dynamic_cast<Switch&>(*mVariables.at(v.second));
 	}
