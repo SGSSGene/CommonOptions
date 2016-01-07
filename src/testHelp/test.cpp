@@ -14,9 +14,7 @@ namespace {
 }
 
 int main(int argc, char** argv) {
-	std::cout << (int)commonOptions::getParaType<int32_t>() << std::endl;
-return 0;
-	SELFTESTMAIN(argv); // Only for unittesting
+//	SELFTESTMAIN(argv); // Only for unittesting
 
 	/** Parse options, if something goes wrong print help message **/
 	if (not commonOptions::parse(argc, argv)) {
@@ -27,6 +25,7 @@ return 0;
 		commonOptions::print();
 		exit(0);
 	}
+		commonOptions::print();
 
 	return 0;
 }

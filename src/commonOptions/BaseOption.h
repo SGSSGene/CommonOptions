@@ -29,6 +29,9 @@ public:
 	auto getPreParseFunction() const -> std::function<void()>;
 	auto getPostParseFunction() const -> std::function<void()>;
 
+	virtual void print() const = 0;
+	virtual void printShellCompl() const = 0;
+
 };
 
 }

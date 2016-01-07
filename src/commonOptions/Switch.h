@@ -19,8 +19,6 @@ public:
 		mPreParseFunction  = []() {};
 		mPostParseFunction = _func;
 	}
-
-
 	operator bool() {
 		return **this;
 	}

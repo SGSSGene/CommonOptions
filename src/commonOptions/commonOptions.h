@@ -25,11 +25,16 @@ auto make_multi_option(std::string const& _str, std::vector<T> _v, std::string c
 	return getRootSection()->make_multi_option(_str, _v, _description);
 }
 
-inline Switch make_switch(std::string const& _str, std::string const& _description) {
+inline auto make_switch(std::string const& _str, std::string const& _description) -> Switch& {
 	return getRootSection()->make_switch(_str, _description, [](){});
 }
-inline Switch make_switch(std::string const& _str, std::string const& _description, std::function<void()> const& _func) {
+inline auto make_switch(std::string const& _str, std::string const& _description, std::function<void()> const& _func) -> Switch& {
 	return getRootSection()->make_switch(_str, _description, _func);
+}
+
+
+inline auto get_option(std::string const& _str) -> BaseOption* {
+	return getRootSection()->getVariable(_str);
 }
 
 }

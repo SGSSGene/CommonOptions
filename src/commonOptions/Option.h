@@ -1,6 +1,7 @@
 #pragma once
 
-#include "AllOptions.h"
+#include "OptionDescription.h"
+#include "ParaType.h"
 #include "BaseOption.h"
 
 #include <algorithm>
@@ -68,21 +69,6 @@ public:
 			}
 			return true;
 		};
-		AllOptions::printMap()[_name] = [=]() {
-			std::stringstream ss;
-			ss<<"--"<<mOptionDescription.optionName;
-			if (AllOptions::baseOptionMap().at(_name)->getParaType() != ParaType::None) {
-				ss<<" "<<mOptionDescription.defaultValue;
-			}
-			while(ss.str().length() < 32) {
-				ss<<" ";
-			}
-			ss<<mOptionDescription.description;
-			std::cout<<ss.str()<<std::endl;
-		};
-		AllOptions::printShellComplMap()[_name] = [=]() {
-			std::cout<<"--"<<mOptionDescription.optionName<<" ";
-		};
 
 		mPreParseFunction = [] {};
 		mPostParseFunction = [this, _func] { _func(mOptionDescription.value); };
@@ -94,6 +80,23 @@ public:
 	T const& operator*() const {
 		return mOptionDescription.value;
 	}
+	void print() const override {
+		std::stringstream ss;
+		ss<<"--"<<mOptionDescription.optionName;
+		if (mParaType != ParaType::None) {
+			ss<<" "<<mOptionDescription.defaultValue;
+		}
+		while(ss.str().length() < 32) {
+			ss<<" ";
+		}
+		ss<<mOptionDescription.description;
+		std::cout<<ss.str()<<std::endl;
+	}
+	void printShellCompl() const override {
+		std::cout<<"--"<<mOptionDescription.optionName<<" ";
+	}
+
+
 };
 template<typename T>
 class Option<std::vector<T>> : public BaseOption {
@@ -124,22 +127,6 @@ public:
 			mOptionDescription.value.push_back(t);
 			return true;
 		};
-		AllOptions::printMap()[_name] = [=]() {
-			std::stringstream ss;
-			ss<<"--"<<mOptionDescription.optionName<<" { ";
-			for (auto const& v : mOptionDescription.defaultValue) {
-				ss << v << ", ";
-			}
-			ss<<"}";
-			while(ss.str().length() < 32) {
-				ss<<" ";
-			}
-			ss<<mOptionDescription.description;
-			std::cout<<ss.str()<<std::endl;
-		};
-		AllOptions::printShellComplMap()[_name] = [=]() {
-			std::cout<<"--"<<mOptionDescription.optionName<<" ";
-		};
 		mPreParseFunction  = [&]() { mOptionDescription.value.clear(); };
 		mPostParseFunction = [this, _func]() { _func(mOptionDescription.value); };
 	}
@@ -150,7 +137,24 @@ public:
 	std::vector<T> const& operator*() const {
 		return mOptionDescription.value;
 	}
+	void print() const override {
+		std::stringstream ss;
+		ss<<"--"<<mOptionDescription.optionName<<" { ";
+		for (auto const& v : mOptionDescription.defaultValue) {
+			ss << v << ", ";
+		}
+		ss<<"}";
+		while(ss.str().length() < 32) {
+			ss<<" ";
+		}
+		ss<<mOptionDescription.description;
+		std::cout<<ss.str()<<std::endl;
+	}
+	void printShellCompl() const override {
+		std::cout<<"--"<<mOptionDescription.optionName<<" ";
+	}
 };
+
 template<typename T>
 class Option<std::set<T>> : public BaseOption {
 private:
@@ -178,22 +182,6 @@ public:
 			ss>>t;
 			mOptionDescription.value.push_back(t);
 		};
-		AllOptions::printMap()[_name] = [=]() {
-			std::stringstream ss;
-			ss<<"--"<<mOptionDescription.optionName<<" { ";
-			for (auto const& v : mOptionDescription.defaultValue) {
-				ss << v << ", ";
-			}
-			ss<<"}";
-			while(ss.str().length() < 32) {
-				ss<<" ";
-			}
-			ss<<mOptionDescription.description;
-			std::cout<<ss.str()<<std::endl;
-		};
-		AllOptions::printShellComplMap()[_name] = [=]() {
-			std::cout<<"--"<<mOptionDescription.optionName<<" ";
-		};
 		mPreParseFunction  = [&]() { mOptionDescription.value.clear(); };
 		mPostParseFunction = [this, _func]() { _func(mOptionDescription.value); };
 	}
@@ -204,6 +192,24 @@ public:
 	std::set<T> const& operator*() const {
 		return mOptionDescription.value;
 	}
+	void print() const override {
+		std::stringstream ss;
+		ss<<"--"<<mOptionDescription.optionName<<" { ";
+		for (auto const& v : mOptionDescription.defaultValue) {
+			ss << v << ", ";
+		}
+		ss<<"}";
+		while(ss.str().length() < 32) {
+			ss<<" ";
+		}
+		ss<<mOptionDescription.description;
+		std::cout<<ss.str()<<std::endl;
+	}
+	void printShellCompl() const override {
+		std::cout<<"--"<<mOptionDescription.optionName<<" ";
+	}
+
+
 };
 
 }

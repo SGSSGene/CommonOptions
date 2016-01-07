@@ -13,9 +13,19 @@ private:
 	std::string mName;
 	std::map<std::string, Section> mChildren;
 
+	std::map<std::string, std::unique_ptr<BaseOption>> mVariables;
 public:
 	Section();
+	Section(Section const& _other);
 	Section(Section* _parent, std::string const& _name);
+
+	Section& operator=(Section const& _other);
+
+	std::vector<BaseOption*> getVariables();
+private:
+	void getVariablesImpl(std::vector<BaseOption*>* options);
+public:
+	BaseOption* getVariable(std::string const& _name);
 
 	Section* accessChild(std::string const& _name);
 
@@ -33,40 +43,49 @@ public:
 	}
 
 	template<typename T>
-	auto make_option(std::string const& _str, T _default, std::set<T> const& _selection, std::string const& _description) -> Option<T> {
+	auto make_option(std::string const& _str, T _default, std::set<T> const& _selection, std::string const& _description) -> Option<T>& {
 		auto v = getSectionOfVariable(_str);
 		if (v.first != this) {
 			return v.first->make_option(v.second, _default, _selection, _description);
 		}
-		return Option<T>(this, v.second, _default, _selection, _description);
+		if (mVariables.find(v.second) == mVariables.end()) {
+			mVariables[v.second].reset(new Option<T>(this, v.second, _default, _selection, _description));
+		}
+		return dynamic_cast<Option<T>&>(*mVariables.at(v.second));
 	}
-	auto make_option(std::string const& _str, char const* _default, std::set<std::string> const& _selection, std::string const& _description) -> Option<std::string> {
+	auto make_option(std::string const& _str, char const* _default, std::set<std::string> const& _selection, std::string const& _description) -> Option<std::string>& {
 		return make_option<std::string>(_str, _default, _selection, _description);
 	}
 
 
 	template<typename T>
-	auto make_option(std::string const& _str, T _default, std::string const& _description) -> Option<T> {
+	auto make_option(std::string const& _str, T _default, std::string const& _description) -> Option<T>& {
 		auto v = getSectionOfVariable(_str);
 		if (v.first != this) {
 			return v.first->make_option(v.second, _default, _description);
 		}
-		return Option<T>(this, v.second, _default, _description);
+		if (mVariables.find(v.second) == mVariables.end()) {
+			mVariables[v.second].reset(new Option<T>(this, v.second, _default, _description));
+		}
+		return dynamic_cast<Option<T>&>(*mVariables.at(v.second));
 	}
-	auto make_option(std::string const& _str, char const* _default, std::string const& _description) -> Option<std::string> {
+	auto make_option(std::string const& _str, char const* _default, std::string const& _description) -> Option<std::string>& {
 		return make_option<std::string>(_str, _default, _description);
 	}
 
 
 	template<typename T>
-	auto make_multi_option(std::string const& _str, std::vector<T> const& _selection, std::string const& _description) -> Option<std::vector<T>>{
+	auto make_multi_option(std::string const& _str, std::vector<T> const& _selection, std::string const& _description) -> Option<std::vector<T>>& {
 		auto v = getSectionOfVariable(_str);
 		if (v.first != this) {
 			return v.first->make_multi_option(v.second, _selection, _description);
 		}
-		return Option<std::vector<T>>(this, v.second, _selection, _description);
+		if (mVariables.find(v.second) == mVariables.end()) {
+			mVariables[v.second].reset(new Option<std::vector<T>>(this, v.second, _selection, _description));
+		}
+		return dynamic_cast<Option<std::vector<T>>&>(*mVariables.at(v.second));
 	}
-	auto make_multi_option(std::string const& _str, std::vector<char const*> const& _selection, std::string const& _description) -> Option<std::vector<std::string>>{
+	auto make_multi_option(std::string const& _str, std::vector<char const*> const& _selection, std::string const& _description) -> Option<std::vector<std::string>>& {
 		std::vector<std::string> retList;
 		retList.reserve(_selection.size());
 		for (auto c : _selection) {
@@ -76,12 +95,15 @@ public:
 	}
 
 
-	auto make_switch(std::string const& _str, std::string const& _description, std::function<void()> const& _func) -> Switch {
+	auto make_switch(std::string const& _str, std::string const& _description, std::function<void()> const& _func) -> Switch& {
 		auto v = getSectionOfVariable(_str);
 		if (v.first != this) {
 			return v.first->make_switch(v.second, _description, _func);
 		}
-		return Switch(this, v.second, _description, _func);
+		if (mVariables.find(v.second) == mVariables.end()) {
+			mVariables[v.second].reset(new Switch(this, v.second, _description, _func));
+		}
+		return dynamic_cast<Switch&>(*mVariables.at(v.second));
 	}
 };
 

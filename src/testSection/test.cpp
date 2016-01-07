@@ -4,10 +4,10 @@
 #include <vector>
 
 namespace {
-	auto section  = commonOptions::get_section("long.option");
-	auto optPara1 = section->make_option("para1", 0,  "this is an int");
-	auto optPara2 = section->make_option("para2", 0., "this is a double");
-	auto optPara3 = section->make_option("para3", "", "this is a string");
+	auto section   = commonOptions::get_section("long.option");
+	auto& optPara1 = section->make_option("para1", 0,  "this is an int");
+	auto& optPara2 = section->make_option("para2", 0., "this is a double");
+	auto& optPara3 = section->make_option("para3", "", "this is a string");
 }
 
 

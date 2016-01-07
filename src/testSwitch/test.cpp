@@ -8,7 +8,7 @@
 #include <vector>
 
 namespace {
-	auto swtPara1 = commonOptions::make_switch("para1", "just a simple switch");
+	auto& swtPara1 = commonOptions::make_switch("para1", "just a simple switch");
 }
 
 int main(int argc, char** argv) {

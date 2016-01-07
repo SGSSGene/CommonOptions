@@ -1,7 +1,8 @@
 #include "BaseOption.h"
 #include "Section.h"
 
-#include "AllOptions.h"
+#include "OptionDescription.h"
+#include "ParaType.h"
 
 namespace commonOptions {
 
@@ -13,11 +14,9 @@ BaseOption::BaseOption(Section* _section, std::string const& _name, ParaType _pa
 	mParseFunction     = [](std::string const&) { return true; };
 	mPreParseFunction  = [] {};
 	mPostParseFunction = [] {};
-	AllOptions::baseOptionMap()[getSectionName() + mName] = this;
 }
 
 BaseOption::~BaseOption() {
-	AllOptions::baseOptionMap().erase(getSectionName() + mName);
 
 }
 

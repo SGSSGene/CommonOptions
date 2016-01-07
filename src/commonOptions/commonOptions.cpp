@@ -9,13 +9,15 @@ bool& hasError() {
 
 
 void print() {
-	for (auto f : AllOptions::printMap()) {
-		f.second();
+	auto allOptions = getRootSection()->getVariables();
+	for (auto b : allOptions) {
+		b->print();
 	}
 }
 void printShellCompl() {
-	for (auto f : AllOptions::printShellComplMap()) {
-		f.second();
+	auto allOptions = getRootSection()->getVariables();
+	for (auto b : allOptions) {
+		b->printShellCompl();
 	}
 }
 
@@ -43,21 +45,21 @@ bool parse(int argc, char const* const* argv) {
 				std::string key   = arg.substr(0, equalSignPos);
 				std::string value = arg.substr(equalSignPos+1);
 
-				if (AllOptions::baseOptionMap().find(key) == AllOptions::baseOptionMap().end()) {
+				auto baseOption = get_option(key);
+				if (not baseOption) {
 					hasError() = true;
 					continue;
 				}
-				auto baseOption = AllOptions::baseOptionMap().at(key);
 				baseOption->getPreParseFunction()();
 				if (not baseOption->getParseFunction()(value)) {
 					hasError() = true;
 				}
 				baseOption->getPostParseFunction()();
-			} else if (AllOptions::baseOptionMap().find(arg) == AllOptions::baseOptionMap().end()) {
+			} else if (not get_option(arg)) {
 				hasError() = true;
-			} else if (AllOptions::baseOptionMap().at(arg)->getParaType() == ParaType::Multi) {
+			} else if (get_option(arg)->getParaType() == ParaType::Multi) {
 				std::string key   = arg.substr(0, equalSignPos);
-				auto baseOption = AllOptions::baseOptionMap().at(key);
+				auto baseOption = get_option(key);
 
 				baseOption->getPreParseFunction()();
 				while (i+1 < argc && std::string(argv[i+1]).compare(0, 2, "--") != 0) {
@@ -71,9 +73,9 @@ bool parse(int argc, char const* const* argv) {
 			} else if (i+1 < argc
 					   && std::string(argv[i+1]).compare(0, 2, "--") != 0) {
 				std::string key   = arg;
-				auto baseOption = AllOptions::baseOptionMap().at(key);
+				auto baseOption = get_option(key);
 
-				if (AllOptions::baseOptionMap().at(key)->getParaType() == ParaType::One) {
+				if (baseOption->getParaType() == ParaType::One) {
 					std::string value = argv[i+1];
 
 
@@ -90,7 +92,7 @@ bool parse(int argc, char const* const* argv) {
 				}
 			} else {
 				std::string key = arg;
-				auto baseOption = AllOptions::baseOptionMap().at(key);
+				auto baseOption = get_option(key);
 				baseOption->getPreParseFunction()();
 				if (not baseOption->getParseFunction()("1")) {
 					hasError() = true;
