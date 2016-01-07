@@ -41,8 +41,4 @@ auto BaseOption::getPostParseFunction() const -> std::function<void()> {
 	return mPostParseFunction;
 }
 
-
-
-
-
 }
