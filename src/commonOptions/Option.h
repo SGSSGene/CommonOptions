@@ -35,7 +35,7 @@ public:
 
 
 	Option(Section* _section, std::string _varName, T const& _default, std::set<T> const& _list, std::string const& _description, std::function<void(T const&)> _func)
-		: BaseOption(_section, _varName)
+		: BaseOption(_section, _varName, commonOptions::getParaType<T>())
 	{
 		onlyPossibleValues = not _list.empty();
 		possibleValues = _list;
@@ -53,7 +53,7 @@ public:
 			map[_name]->value        = _default;
 		}
 		value = map[_name];
-		AllOptions::parseMap()[_name] = [&](std::string const& _value) {
+		mParseFunction = [&](std::string const& _value) {
 			std::stringstream ss;
 			ss<<_value;
 			ss>>value->value;
@@ -75,7 +75,7 @@ public:
 		AllOptions::printMap()[_name] = [=]() {
 			std::stringstream ss;
 			ss<<"--"<<value->optionName;
-			if (AllOptions::parseParaMap()[_name] != ParaType::None) {
+			if (AllOptions::baseOptionMap().at(_name)->getParaType() != ParaType::None) {
 				ss<<" "<<value->defaultValue;
 			}
 			while(ss.str().length() < 32) {
@@ -88,9 +88,8 @@ public:
 			std::cout<<"--"<<value->optionName<<" ";
 		};
 
-		AllOptions::parseParaMap()[_name] = ParaType::One;
-		AllOptions::preParseMap()[_name] = []() {};
-		AllOptions::postParseMap()[_name] = [this, _func]() { _func(value->value); };
+		mPreParseFunction = [] {};
+		mPostParseFunction = [this, _func] { _func(value->value); };
 	}
 
 	T const* operator->() const {
@@ -110,7 +109,7 @@ public:
 	}
 
 	Option(Section* _section, std::string _varName, std::vector<T> const& _default, std::string const& _description, std::function<void(std::vector<T> const&)> _func)
-		: BaseOption(_section, _varName)
+		: BaseOption(_section, _varName, commonOptions::getParaType<std::vector<T>>())
 	{
 		auto _name = getSectionName() + _varName;
 
@@ -125,7 +124,7 @@ public:
 			map[_name]->value        = _default;
 		}
 		value = map[_name];
-		AllOptions::parseMap()[_name] = [&](std::string const& _value) {
+		mParseFunction = [&](std::string const& _value) {
 			std::stringstream ss;
 			ss<<_value;
 			T t;
@@ -149,10 +148,8 @@ public:
 		AllOptions::printShellComplMap()[_name] = [=]() {
 			std::cout<<"--"<<value->optionName<<" ";
 		};
-
-		AllOptions::parseParaMap()[_name] = ParaType::Multi;
-		AllOptions::preParseMap()[_name] = [&]() { value->value.clear(); };
-		AllOptions::postParseMap()[_name] = [this, _func]() { _func(value->value); };
+		mPreParseFunction  = [&]() { value->value.clear(); };
+		mPostParseFunction = [this, _func]() { _func(value->value); };
 	}
 
 	std::vector<T> const* operator->() const {
@@ -172,7 +169,7 @@ public:
 	}
 
 	Option(Section* _section, std::string _varName, std::set<T> const& _default, std::string const& _description, std::function<void(std::set<T> const&)> _func)
-		: BaseOption(_section)
+		: BaseOption(_section, _varName, commonOptions::getParaType<std::set<T>>())
 	{
 		auto _name = getSectionName() + _varName;
 		std::transform(_name.begin(), _name.end(), _name.begin(), ::tolower);
@@ -186,7 +183,7 @@ public:
 			map[_name]->value        = _default;
 		}
 		value = map[_name];
-		AllOptions::parseMap()[_name] = [&](std::string const& _name) {
+		mParseFunction = [&](std::string const& _name) {
 			std::stringstream ss;
 			ss<<_name;
 			T t;
@@ -209,9 +206,8 @@ public:
 		AllOptions::printShellComplMap()[_name] = [=]() {
 			std::cout<<"--"<<value->optionName<<" ";
 		};
-		AllOptions::parseParaMap()[_name] = ParaType::Multi;
-		AllOptions::preParseMap()[_name] = [&]() { value->value.clear(); };
-		AllOptions::postParseMap()[_name] = [this, _func]() { _func(value->value); };
+		mPreParseFunction  = [&]() { value->value.clear(); };
+		mPostParseFunction = [this, _func]() { _func(value->value); };
 	}
 
 	std::set<T> const* operator->() const {

@@ -2,7 +2,7 @@
  *
  * This examples shows how to use the help mechanism
  */
-#include "commonOptions/commonOptions.h"
+#include <commonOptions/commonOptions.h>
 #include <selfTest/selfTest.h>
 #include <iostream>
 #include <vector>
@@ -14,6 +14,8 @@ namespace {
 }
 
 int main(int argc, char** argv) {
+	std::cout << (int)commonOptions::getParaType<int32_t>() << std::endl;
+return 0;
 	SELFTESTMAIN(argv); // Only for unittesting
 
 	/** Parse options, if something goes wrong print help message **/

@@ -43,52 +43,59 @@ bool parse(int argc, char const* const* argv) {
 				std::string key   = arg.substr(0, equalSignPos);
 				std::string value = arg.substr(equalSignPos+1);
 
-				if (AllOptions::parseParaMap().find(key) == AllOptions::parseParaMap().end()) {
+				if (AllOptions::baseOptionMap().find(key) == AllOptions::baseOptionMap().end()) {
 					hasError() = true;
 					continue;
 				}
-				AllOptions::preParseMap()[key]();
-				if (not AllOptions::parseMap()[key](value)) {
+				auto baseOption = AllOptions::baseOptionMap().at(key);
+				baseOption->getPreParseFunction()();
+				if (not baseOption->getParseFunction()(value)) {
 					hasError() = true;
 				}
-				AllOptions::postParseMap()[key]();
-			} else if (AllOptions::parseParaMap().find(arg) == AllOptions::parseParaMap().end()) {
+				baseOption->getPostParseFunction()();
+			} else if (AllOptions::baseOptionMap().find(arg) == AllOptions::baseOptionMap().end()) {
 				hasError() = true;
-			} else if (AllOptions::parseParaMap().at(arg) == ParaType::Multi) {
+			} else if (AllOptions::baseOptionMap().at(arg)->getParaType() == ParaType::Multi) {
 				std::string key   = arg.substr(0, equalSignPos);
-				AllOptions::preParseMap()[key]();
+				auto baseOption = AllOptions::baseOptionMap().at(key);
+
+				baseOption->getPreParseFunction()();
 				while (i+1 < argc && std::string(argv[i+1]).compare(0, 2, "--") != 0) {
 					std::string value = argv[i+1];
-					if (not AllOptions::parseMap()[key](value)) {
+					if (not baseOption->getParseFunction()(value)) {
 						hasError() = true;
 					}
 					++i;
 				}
-				AllOptions::postParseMap()[key]();
+				baseOption->getPostParseFunction()();
 			} else if (i+1 < argc
 					   && std::string(argv[i+1]).compare(0, 2, "--") != 0) {
 				std::string key   = arg;
+				auto baseOption = AllOptions::baseOptionMap().at(key);
 
-				if (AllOptions::parseParaMap().at(key) == ParaType::One) {
+				if (AllOptions::baseOptionMap().at(key)->getParaType() == ParaType::One) {
 					std::string value = argv[i+1];
-					AllOptions::preParseMap()[key]();
-					if (not AllOptions::parseMap()[key](value)) {
+
+
+					baseOption->getPreParseFunction()();
+					if (not baseOption->getParseFunction()(value)) {
 						hasError() = true;
 					}
-					AllOptions::postParseMap()[key]();
+					baseOption->getPostParseFunction()();
 					++i;
 				} else {
-					if (not AllOptions::parseMap()[key]("1")) {
+					if (not baseOption->getParseFunction()("1")) {
 						hasError() = true;
 					}
 				}
 			} else {
-				AllOptions::preParseMap()[arg]();
-				if (not AllOptions::parseMap()[arg]("1")) {
+				std::string key = arg;
+				auto baseOption = AllOptions::baseOptionMap().at(key);
+				baseOption->getPreParseFunction()();
+				if (not baseOption->getParseFunction()("1")) {
 					hasError() = true;
 				}
-				AllOptions::postParseMap()[arg]();
-
+				baseOption->getPostParseFunction()();
 			}
 		}
 	}
