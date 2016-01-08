@@ -25,8 +25,6 @@ int main(int argc, char** argv) {
 		commonOptions::print();
 		exit(0);
 	}
-		commonOptions::print();
-
 	return 0;
 }
 

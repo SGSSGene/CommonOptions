@@ -7,10 +7,6 @@ projects:
     dependencies:
       - SelfTest/selfTest
       - CommonOptions/commonOptions
-  - path: testMultiOption
-    dependencies:
-      - SelfTest/selfTest
-      - CommonOptions/commonOptions
   - path: testSwitch
     dependencies:
       - SelfTest/selfTest

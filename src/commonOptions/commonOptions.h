@@ -20,11 +20,6 @@ auto make_option(Args const&... args) -> decltype(getRootSection()->make_option(
 	return getRootSection()->make_option(args...);
 }
 
-template<typename T>
-auto make_multi_option(std::string const& _str, std::vector<T> _v, std::string const& _description) -> decltype(getRootSection()->make_multi_option(_str, _v, _description)) {
-	return getRootSection()->make_multi_option(_str, _v, _description);
-}
-
 inline auto make_switch(std::string const& _str, std::string const& _description) -> Switch& {
 	return getRootSection()->make_switch(_str, _description);
 }

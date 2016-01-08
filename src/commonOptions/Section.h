@@ -73,28 +73,6 @@ public:
 		return make_option<std::string>(_str, _default, _description);
 	}
 
-
-	template<typename T>
-	auto make_multi_option(std::string const& _str, std::vector<T> const& _selection, std::string const& _description) -> Option<std::vector<T>>& {
-		auto v = getSectionOfVariable(_str);
-		if (v.first != this) {
-			return v.first->make_multi_option(v.second, _selection, _description);
-		}
-		if (mVariables.find(v.second) == mVariables.end()) {
-			mVariables[v.second].reset(new Option<std::vector<T>>(this, v.second, _selection, _description));
-		}
-		return dynamic_cast<Option<std::vector<T>>&>(*mVariables.at(v.second));
-	}
-	auto make_multi_option(std::string const& _str, std::vector<char const*> const& _selection, std::string const& _description) -> Option<std::vector<std::string>>& {
-		std::vector<std::string> retList;
-		retList.reserve(_selection.size());
-		for (auto c : _selection) {
-			retList.push_back(c);
-		}
-		return make_multi_option<std::string>(_str, retList, _description);
-	}
-
-
 	auto make_switch(std::string const& _str, std::string const& _description) -> Switch& {
 		auto v = getSectionOfVariable(_str);
 		if (v.first != this) {
