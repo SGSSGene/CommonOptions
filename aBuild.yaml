@@ -1,8 +1,11 @@
 name: CommonOptions
 extDependencies:
   - url: git@cakeface.de:aBuild/SelfTest
+  - url: git@cakeface.de:aBuild/Serializer
 projects:
   - path: commonOptions
+    dependencies:
+      - Serializer/serializer
   - path: testSimpleOption
     dependencies:
       - SelfTest/selfTest
@@ -20,6 +23,8 @@ projects:
       - SelfTest/selfTest
       - CommonOptions/commonOptions
   - path: test
+    dependencies:
+      - CommonOptions/commonOptions
   - path: testSection
     dependencies:
       - SelfTest/selfTest

@@ -34,65 +34,38 @@ void printShellCompl() {
 bool parse(int argc, char const* const* argv) {
 	std::map<std::string, std::string> options;
 
-	for (int i(0); i<argc; ++i) {
+	for (int i(1); i<argc; ++i) {
 		std::string arg = argv[i];
 		if (0 == arg.compare(0, 2, "--")) {
 			arg = arg.substr(2); // cut of first two symbols
 			std::transform(arg.begin(), arg.end(), arg.begin(), ::tolower);
 
+			std::string key   = arg;
+			std::string value = "true";
+
 			size_t equalSignPos = arg.find("=");
 			if (equalSignPos != std::string::npos) {
-				std::string key   = arg.substr(0, equalSignPos);
-				std::string value = arg.substr(equalSignPos+1);
-
-				auto baseOption = get_option(key);
-				if (not baseOption) {
-					hasError() = true;
-					continue;
-				}
-				if (not baseOption->simpleParse({value})) {
-					hasError() = true;
-				}
-			} else if (not get_option(arg)) {
-				hasError() = true;
-			} else if (get_option(arg)->getParaType() == ParaType::Multi) {
-				std::string key   = arg.substr(0, equalSignPos);
-				auto baseOption = get_option(key);
-
-				std::vector<std::string> values;
-
-				while (i+1 < argc && std::string(argv[i+1]).compare(0, 2, "--") != 0) {
-					values.push_back(argv[i+1]);
-					++i;
-				}
-				if (not baseOption->simpleParse(values)) {
-					hasError() = true;
-				}
-			} else if (i+1 < argc
-					   && std::string(argv[i+1]).compare(0, 2, "--") != 0) {
-				std::string key   = arg;
-				auto baseOption = get_option(key);
-
-				if (baseOption->getParaType() == ParaType::One) {
-					std::string value = argv[i+1];
-
-
-					if (not baseOption->simpleParse({value})) {
-						hasError() = true;
-					}
-					++i;
-				} else {
-					if (not baseOption->simpleParse({"1"})) {
-						hasError() = true;
-					}
-				}
-			} else {
-				std::string key = arg;
-				auto baseOption = get_option(key);
-				if (not baseOption->simpleParse({"1"})) {
-					hasError() = true;
-				}
+				key   = arg.substr(0, equalSignPos);
+				value = arg.substr(equalSignPos+1);
+			} else if (i+1 < argc && std::string(argv[i+1]).compare(0, 2, "--" ) != 0) {
+				value = argv[i+1];
+				++i;
 			}
+
+			auto baseOption = get_option(key);
+
+			if (not baseOption) {
+				//!TODO
+				//std::cout << "what to do with unknown input?: " << key << std::endl;
+				hasError() = true;
+				continue;
+			}
+
+			if (not baseOption->simpleParse({value})) {
+				hasError() = true;
+			}
+		} else {
+			//std::cout << "ignoring: " << arg << std::endl;
 		}
 	}
 	if (argc == 2 && std::string(argv[1]) == "__completion") {

@@ -22,7 +22,7 @@ public:
 	auto getName() const -> std::string const&;
 	auto getParaType() const -> ParaType;
 
-	virtual bool simpleParse(std::vector<std::string> const& _params) = 0;
+	virtual bool simpleParse(std::string const& _param) = 0;
 	virtual void print() const = 0;
 	virtual void printShellCompl() const = 0;
 
