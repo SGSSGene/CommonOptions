@@ -51,19 +51,8 @@ bool parse(int argc, char const* const* argv) {
 				value = argv[i+1];
 				++i;
 			}
-
-			auto baseOption = get_option(key);
-
-			if (not baseOption) {
-				//!TODO
-				//std::cout << "what to do with unknown input?: " << key << std::endl;
-				hasError() = true;
-				continue;
-			}
-
-			if (not baseOption->simpleParse({value})) {
-				hasError() = true;
-			}
+			auto description = get_description(key);
+			description->changeDefaultValue(value);
 		} else {
 			//std::cout << "ignoring: " << arg << std::endl;
 		}

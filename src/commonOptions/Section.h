@@ -1,9 +1,12 @@
 #pragma once
 
-#include <string>
-#include <map>
+
 #include "Switch.h"
 #include "utils.h"
+
+#include <map>
+#include <serializer/serializer.h>
+#include <string>
 
 namespace commonOptions {
 
@@ -14,6 +17,7 @@ private:
 	std::map<std::string, Section> mChildren;
 
 	std::map<std::string, std::unique_ptr<BaseOption>> mVariables;
+	std::map<std::string, std::unique_ptr<OptionDescription>> mDescriptions;
 public:
 	Section();
 	Section(Section const& _other);
@@ -22,10 +26,19 @@ public:
 	Section& operator=(Section const& _other);
 
 	std::vector<BaseOption*> getVariables();
+
+	template<typename Node>
+	void serialize(Node& node) {
+		node["parent"]       % mParent;
+		node["name"]         % mName;
+		node["children"]     % mChildren;
+		node["descriptions"] % mDescriptions;
+	}
 private:
 	void getVariablesImpl(std::vector<BaseOption*>* options);
 public:
 	BaseOption* getVariable(std::string const& _name);
+	OptionDescription* getDescription(std::string const& _name);
 
 	Section* accessChild(std::string const& _name);
 

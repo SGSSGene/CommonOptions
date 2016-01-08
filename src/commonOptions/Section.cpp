@@ -50,6 +50,21 @@ BaseOption* Section::getVariable(std::string const& _name) {
 
 	return nullptr;
 }
+OptionDescription* Section::getDescription(std::string const& _name) {
+	auto p = getSectionOfVariable(_name);
+	if (p.first != this) {
+		return p.first->getDescription(p.second);
+	}
+
+	if (mDescriptions.find(_name) == mDescriptions.end()) {
+		auto& ptr = mDescriptions[_name];
+		ptr.reset(new OptionDescription);
+		ptr->optionName = _name;
+	}
+	return mDescriptions.at(_name).get();
+}
+
+
 
 Section* Section::accessChild(std::string const& _name) {
 	auto iter = mChildren.find(_name);

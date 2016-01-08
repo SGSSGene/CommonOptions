@@ -3,8 +3,9 @@
  * This examples shows how to use the help mechanism
  */
 #include <commonOptions/commonOptions.h>
-#include <selfTest/selfTest.h>
 #include <iostream>
+#include <selfTest/selfTest.h>
+#include <serializer/serializer.h>
 #include <vector>
 
 namespace {
@@ -29,10 +30,7 @@ int main(int argc, char** argv) {
 }
 
 SELFTEST(Test1, "", 0, "", "")
-SELFTEST(Test2, "--invalid", 0, "--help                          prints this help\n"
-                                "--para1 0                       an option\n"
-                                "--para2                         just a simple switch\n", "")
-SELFTEST(Test3, "--help", 0, "--help                          prints this help\n"
+SELFTEST(Test2, "--help", 0, "--help                          prints this help\n"
                              "--para1 0                       an option\n"
                              "--para2                         just a simple switch\n", "")
 

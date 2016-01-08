@@ -9,7 +9,8 @@ namespace commonOptions {
 bool& hasError();
 void  print();
 void  printShellCompl();
-bool  parse(int argc, char const* const* argv);
+
+bool parse(int argc, char const* const* argv);
 
 Section* get_section(std::string const& _str);
 
@@ -26,6 +27,9 @@ inline auto make_switch(std::string const& _str, std::string const& _description
 
 inline auto get_option(std::string const& _str) -> BaseOption* {
 	return getRootSection()->getVariable(_str);
+}
+inline auto get_description(std::string const& _str) -> OptionDescription* {
+	return getRootSection()->getDescription(_str);
 }
 
 }
