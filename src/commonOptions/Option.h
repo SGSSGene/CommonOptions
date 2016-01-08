@@ -37,7 +37,7 @@ public:
 		auto _name = getSectionName() + _varName;
 		std::transform(_name.begin(), _name.end(), _name.begin(), ::tolower);
 
-		mOptionDescription = std::shared_ptr<OptionDescription<T>>();
+		mOptionDescription = std::make_shared<OptionDescription<T>>();
 		mOptionDescription->optionName   = _name;
 		mOptionDescription->description  = _description;
 		mOptionDescription->defaultValue = _default;

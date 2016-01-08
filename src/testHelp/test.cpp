@@ -14,7 +14,7 @@ namespace {
 }
 
 int main(int argc, char** argv) {
-//	SELFTESTMAIN(argv); // Only for unittesting
+	SELFTESTMAIN(argv); // Only for unittesting
 
 	/** Parse options, if something goes wrong print help message **/
 	if (not commonOptions::parse(argc, argv)) {
