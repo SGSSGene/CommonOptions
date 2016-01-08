@@ -11,7 +11,6 @@ BaseOption::BaseOption(Section* _section, std::string const& _name, ParaType _pa
 	, mName (_name)
 	, mParaType (_paraType)
 {
-	mParseFunction     = [](std::string const&) { return true; };
 }
 
 BaseOption::~BaseOption() {
@@ -27,9 +26,6 @@ auto BaseOption::getName() const -> std::string const& {
 }
 auto BaseOption::getParaType() const -> ParaType {
 	return mParaType;
-}
-auto BaseOption::getParseFunction() const -> std::function<bool(std::string const&)> {
-	return mParseFunction;
 }
 
 }

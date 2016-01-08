@@ -43,26 +43,33 @@ public:
 		mOptionDescription->defaultValue = _default;
 		mOptionDescription->value        = _default;
 
-		mParseFunction = [&](std::string const& _value) {
-			std::stringstream ss;
-			ss<<_value;
-			ss>>mOptionDescription->value;
-			if (onlyPossibleValues) {
-				bool foundValue {false};
-				for (auto const& s : possibleValues) {
-					if (mOptionDescription->value == s) {
-						foundValue = true;
-						break;
-					}
-				}
-				if (not foundValue) {
-					std::cerr<<"Wrong option: "<<getName()<<" doesn't accept: "<<_value<<std::endl;
-					return false;
+	}
+	bool simpleParse(std::vector<std::string> const& _params) override {
+		if (_params.size() != 1) {
+			//!TODO better message needed
+			std::cerr << "Option only takes one argument" << std::endl;
+			return false;
+		}
+
+		std::stringstream ss;
+		ss << _params[0];
+		ss>>mOptionDescription->value;
+		if (onlyPossibleValues) {
+			bool foundValue {false};
+			for (auto const& s : possibleValues) {
+				if (mOptionDescription->value == s) {
+					foundValue = true;
+					break;
 				}
 			}
-			return true;
-		};
-	}
+			if (not foundValue) {
+				std::cerr<<"Wrong option: "<<getName()<<" doesn't accept: "<<_params[0]<<std::endl;
+				return false;
+			}
+		}
+		return true;
+	};
+
 
 	T const* operator->() const {
 		return &mOptionDescription->value;
@@ -105,16 +112,19 @@ public:
 		mOptionDescription->description  = _description;
 		mOptionDescription->defaultValue = _default;
 		mOptionDescription->value        = _default;
-
-		mParseFunction = [&](std::string const& _value) {
-			std::stringstream ss;
-			ss<<_value;
-			T t;
-			ss>>t;
-			mOptionDescription->value.push_back(t);
-			return true;
-		};
 	}
+	bool simpleParse(std::vector<std::string> const& _params) override {
+		mOptionDescription->value.clear();
+		for (auto const& p : _params) {
+			std::stringstream ss;
+			ss << p;
+			T t;
+			ss >> t;
+			mOptionDescription->value.push_back(t);
+		}
+		return true;
+	}
+
 
 	std::vector<T> const* operator->() const {
 		return &mOptionDescription->value;
@@ -157,15 +167,20 @@ public:
 		mOptionDescription->description  = _description;
 		mOptionDescription->defaultValue = _default;
 		mOptionDescription->value        = _default;
-
-		mParseFunction = [&](std::string const& _name) {
-			std::stringstream ss;
-			ss<<_name;
-			T t;
-			ss>>t;
-			mOptionDescription->value.push_back(t);
-		};
 	}
+
+	bool simpleParse(std::vector<std::string> const& _params) override {
+		mOptionDescription->value.clear();
+		for (auto const& p : _params) {
+			std::stringstream ss;
+			ss << p;
+			T t;
+			ss >> t;
+			mOptionDescription->value.insert(t);
+		}
+		return true;
+	}
+
 
 	std::set<T> const* operator->() const {
 		return &mOptionDescription->value;

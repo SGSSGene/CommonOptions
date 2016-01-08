@@ -50,7 +50,7 @@ bool parse(int argc, char const* const* argv) {
 					hasError() = true;
 					continue;
 				}
-				if (not baseOption->getParseFunction()(value)) {
+				if (not baseOption->simpleParse({value})) {
 					hasError() = true;
 				}
 			} else if (not get_option(arg)) {
@@ -59,12 +59,14 @@ bool parse(int argc, char const* const* argv) {
 				std::string key   = arg.substr(0, equalSignPos);
 				auto baseOption = get_option(key);
 
+				std::vector<std::string> values;
+
 				while (i+1 < argc && std::string(argv[i+1]).compare(0, 2, "--") != 0) {
-					std::string value = argv[i+1];
-					if (not baseOption->getParseFunction()(value)) {
-						hasError() = true;
-					}
+					values.push_back(argv[i+1]);
 					++i;
+				}
+				if (not baseOption->simpleParse(values)) {
+					hasError() = true;
 				}
 			} else if (i+1 < argc
 					   && std::string(argv[i+1]).compare(0, 2, "--") != 0) {
@@ -75,19 +77,19 @@ bool parse(int argc, char const* const* argv) {
 					std::string value = argv[i+1];
 
 
-					if (not baseOption->getParseFunction()(value)) {
+					if (not baseOption->simpleParse({value})) {
 						hasError() = true;
 					}
 					++i;
 				} else {
-					if (not baseOption->getParseFunction()("1")) {
+					if (not baseOption->simpleParse({"1"})) {
 						hasError() = true;
 					}
 				}
 			} else {
 				std::string key = arg;
 				auto baseOption = get_option(key);
-				if (not baseOption->getParseFunction()("1")) {
+				if (not baseOption->simpleParse({"1"})) {
 					hasError() = true;
 				}
 			}
