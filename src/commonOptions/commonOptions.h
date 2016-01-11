@@ -12,6 +12,9 @@ void  printShellCompl();
 
 bool parse(int argc, char const* const* argv);
 
+void loadFile(std::string const& _file);
+void saveFile(std::string const& _file, std::vector<std::string> const& _includingSections);
+
 Section* get_section(std::string const& _str);
 
 Section* getRootSection();

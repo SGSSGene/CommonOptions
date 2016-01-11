@@ -18,7 +18,6 @@ class Section;
 template<typename T>
 struct CurrentValue {
 	T    value;
-	bool defaultValue;
 };
 
 /**
@@ -31,10 +30,10 @@ private:
 	std::set<T>        possibleValues;
 	std::shared_ptr<CurrentValue<T>>   mCurrentValue;
 public:
-	Option(Section* _section, std::string const& _name, T const& _default, std::string const& _description)
+	Option(Section* _section, std::string const& _name, T _default, std::string const& _description)
 		: Option(_section, _name, _default, {}, _description) {
 	}
-	Option(Section* _section, std::string const& _varName, T const& _default, std::set<T> const& _list, std::string const& _description)
+	Option(Section* _section, std::string const& _varName, T _default, std::set<T> const& _list, std::string const& _description)
 		: BaseOption(_section, _varName, commonOptions::getParaType<T>())
 	{
 		onlyPossibleValues = not _list.empty();
@@ -47,35 +46,23 @@ public:
 		createDescription(serializer::yaml::writeAsString(_default), _description);
 
 		mCurrentValue = std::make_shared<CurrentValue<T>>();
-
-		mCurrentValue->value = _default;
-		mCurrentValue->defaultValue = true;
+		if (mOptionDescription->defaultValueActive) {
+			mCurrentValue->value = _default;
+		} else {
+			serializer::yaml::readFromString(mOptionDescription->value, mCurrentValue->value);
+		}
 
 		mOptionDescription->onDefaultValueChange = [&] {
-			if (mCurrentValue->defaultValue) {
+			if (mOptionDescription->defaultValueActive) {
 				serializer::yaml::readFromString(mOptionDescription->defaultValue, mCurrentValue->value);
 			}
 		};
+		mOptionDescription->onValueChange = [&] {
+			if (mOptionDescription->defaultValueActive) {
+				serializer::yaml::readFromString(mOptionDescription->value, mCurrentValue->value);
+			}
+		};
 	}
-	bool simpleParse(std::string const& _param) override {
-		serializer::yaml::readFromString(_param, mCurrentValue->value);
-
-		if (onlyPossibleValues) {
-			bool foundValue {false};
-			for (auto const& s : possibleValues) {
-				if (mCurrentValue->value == s) {
-					foundValue = true;
-					break;
-				}
-			}
-			if (not foundValue) {
-				std::cerr<<"Wrong option: "<<getName()<<" doesn't accept: "<<_param<<std::endl;
-				return false;
-			}
-		}
-		return true;
-	};
-
 
 	T const* operator->() const {
 		return &mCurrentValue->value;
@@ -86,16 +73,18 @@ public:
 	}
 
 	void resetToDefault() {
-		mCurrentValue->defaultValue = true;
+		mOptionDescription->defaultValueActive = true;
 		serializer::yaml::readFromString(mOptionDescription->defaultValue, mCurrentValue->value);
 	}
 	void setValue(T const& t) {
-		mCurrentValue->defaultValue = false;
 		mCurrentValue->value = t;
+		mOptionDescription->value = serializer::yaml::writeAsString(mCurrentValue->value);
+		mOptionDescription->defaultValueActive = false;
 	}
 	void setValue(T&& t) {
-		mCurrentValue->defaultValue = false;
 		mCurrentValue->value = t;
+		mOptionDescription->value = serializer::yaml::writeAsString(mCurrentValue->value);
+		mOptionDescription->defaultValueActive = false;
 	}
 
 	void print() const override {

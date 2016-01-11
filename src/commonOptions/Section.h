@@ -5,7 +5,6 @@
 #include "utils.h"
 
 #include <map>
-#include <serializer/serializer.h>
 #include <string>
 
 namespace commonOptions {
@@ -25,20 +24,16 @@ public:
 
 	Section& operator=(Section const& _other);
 
-	std::vector<BaseOption*> getVariables();
+	auto getVariables() -> std::vector<BaseOption*>;
+	auto getChildren() const -> std::map<std::string, Section> const&;
+	auto getChildren() -> std::map<std::string, Section>&;
+	auto getDescriptions() const -> std::map<std::string, std::unique_ptr<OptionDescription>> const&;
 
-	template<typename Node>
-	void serialize(Node& node) {
-		node["parent"]       % mParent;
-		node["name"]         % mName;
-		node["children"]     % mChildren;
-		node["descriptions"] % mDescriptions;
-	}
 private:
 	void getVariablesImpl(std::vector<BaseOption*>* options);
 public:
-	BaseOption* getVariable(std::string const& _name);
-	OptionDescription* getDescription(std::string const& _name);
+	auto getVariable(std::string const& _name) -> BaseOption*;
+	auto getDescription(std::string const& _name) -> OptionDescription*;
 
 	Section* accessChild(std::string const& _name);
 

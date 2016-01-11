@@ -3,7 +3,6 @@
 
 #include <map>
 #include <memory>
-#include <serializer/serializer.h>
 #include <string>
 
 
@@ -15,20 +14,27 @@ namespace commonOptions {
 struct OptionDescription {
 	std::string optionName;
 	std::string description;
+	int         defaultValueLevel;
 	std::string defaultValue;
-	std::function<void()> onDefaultValueChange;
+	bool        defaultValueActive;
+	std::string value;
 
-	void changeDefaultValue(std::string const& _defaultValue) {
+	std::function<void()> onDefaultValueChange;
+	std::function<void()> onValueChange;
+
+	void changeDefaultValue(std::string const& _defaultValue, int _level) {
+		if (_level < defaultValueLevel) return;
+		defaultValueLevel = _level;
 		defaultValue = _defaultValue;
 		if (onDefaultValueChange) {
 			onDefaultValueChange();
 		}
 	}
-
-	template<typename Node>
-	void serialize(Node& node) {
-		node["optionName"]   % optionName;
-		node["description"]  % description;
+	void changeValue(std::string const& _value) {
+		value = _value;
+		if (onValueChange) {
+			onValueChange();
+		}
 	}
 };
 

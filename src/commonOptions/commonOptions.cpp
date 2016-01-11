@@ -52,7 +52,7 @@ bool parse(int argc, char const* const* argv) {
 				++i;
 			}
 			auto description = get_description(key);
-			description->changeDefaultValue(value);
+			description->changeDefaultValue(value, 1);
 		} else {
 			//std::cout << "ignoring: " << arg << std::endl;
 		}
@@ -63,6 +63,53 @@ bool parse(int argc, char const* const* argv) {
 	}
 
 	return not hasError();
+}
+
+void loadFile(std::string const& _file) {
+	std::map<std::string, std::string> options;
+
+	serializer::yaml::read(_file, options);
+
+	for (auto o : options) {
+		auto desc = get_description(o.first);
+		desc->changeValue(o.second);
+		desc->defaultValueActive = false;
+	}
+}
+
+void saveFile(std::string const& _file, std::vector<std::string> const& _includingSections) {
+	std::map<std::string, std::string> options;
+
+	std::set<Section*> allSections;
+
+	std::queue<Section*> sectionsToProcess;
+
+	// collecting all sections (to remove duplicates)
+	for (auto const& sectName : _includingSections) {
+		sectionsToProcess.push(get_section(sectName));
+	}
+	while (not sectionsToProcess.empty()) {
+		auto sect = sectionsToProcess.front();
+		sectionsToProcess.pop();
+		allSections.insert(sect);
+		for (auto& child : sect->getChildren()) {
+			sectionsToProcess.push(&child.second);
+		}
+	}
+
+	// Serialize all OptionDescriptions (if they don't have default value)
+	for (auto section : allSections) {
+		auto fullName = section->fullName();
+
+		for (auto const& description : section->getDescriptions()) {
+			auto name = fullName + description.second->optionName;
+			if (not description.second->defaultValueActive) {
+				auto const* d = description.second.get();
+				options[name] = d->value;
+			}
+		}
+	}
+	serializer::yaml::write(_file, options);
 }
 
 Section* get_section(std::string const& _str) {

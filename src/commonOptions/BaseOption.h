@@ -25,10 +25,8 @@ public:
 	auto getParaType() const -> ParaType;
 	void createDescription(std::string const& _defaultValue, std::string const& _description);
 
-	virtual bool simpleParse(std::string const& _param) = 0;
 	virtual void print() const = 0;
 	virtual void printShellCompl() const = 0;
-
 };
 
 }

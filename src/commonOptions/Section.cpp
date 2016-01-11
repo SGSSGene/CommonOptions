@@ -23,11 +23,21 @@ Section& Section::operator=(Section const& _other) {
 	return *this;
 }
 
-std::vector<BaseOption*> Section::getVariables() {
+auto Section::getVariables() -> std::vector<BaseOption*> {
 	std::vector<BaseOption*> options;
 	getVariablesImpl(&options);
 	return options;
 }
+auto Section::getChildren() const -> std::map<std::string, Section> const& {
+	return mChildren;
+}
+auto Section::getChildren() -> std::map<std::string, Section>& {
+	return mChildren;
+}
+auto Section::getDescriptions() const -> std::map<std::string, std::unique_ptr<OptionDescription>> const& {
+	return mDescriptions;
+}
+
 
 void Section::getVariablesImpl(std::vector<BaseOption*>* options) {
 	for (auto& p : mVariables) {
@@ -38,7 +48,7 @@ void Section::getVariablesImpl(std::vector<BaseOption*>* options) {
 	}
 }
 
-BaseOption* Section::getVariable(std::string const& _name) {
+auto Section::getVariable(std::string const& _name) -> BaseOption* {
 	auto p = getSectionOfVariable(_name);
 	if (p.first != this) {
 		return p.first->getVariable(p.second);
@@ -50,7 +60,8 @@ BaseOption* Section::getVariable(std::string const& _name) {
 
 	return nullptr;
 }
-OptionDescription* Section::getDescription(std::string const& _name) {
+
+auto Section::getDescription(std::string const& _name) -> OptionDescription* {
 	auto p = getSectionOfVariable(_name);
 	if (p.first != this) {
 		return p.first->getDescription(p.second);
@@ -60,6 +71,8 @@ OptionDescription* Section::getDescription(std::string const& _name) {
 		auto& ptr = mDescriptions[_name];
 		ptr.reset(new OptionDescription);
 		ptr->optionName = _name;
+		ptr->defaultValueActive = true;
+		ptr->defaultValueLevel  = -1;
 	}
 	return mDescriptions.at(_name).get();
 }

@@ -38,7 +38,10 @@ void BaseOption::createDescription(std::string const& _defaultValue, std::string
 	if (_description != "") {
 		mOptionDescription->description = _description;
 	}
-	mOptionDescription->defaultValue = _defaultValue;
+	if (mOptionDescription->defaultValueLevel <= 0) {
+		mOptionDescription->defaultValue = _defaultValue;
+		mOptionDescription->defaultValueLevel = 0;
+	}
 }
 
 

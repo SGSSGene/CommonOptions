@@ -5,7 +5,6 @@
 #include <commonOptions/commonOptions.h>
 #include <iostream>
 #include <selfTest/selfTest.h>
-#include <serializer/serializer.h>
 #include <vector>
 
 namespace {
