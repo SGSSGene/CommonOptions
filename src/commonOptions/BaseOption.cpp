@@ -65,7 +65,7 @@ void BaseOption::printShellCompl() const {
 	if (not isCommand) {
 		std::cout << "--"<<mOptionDescription->optionName << " ";
 	} else {
-		std::cout << mOptionDescription->optionName.c_str() + std::string("--__command__").size() << " ";
+		std::cout << mOptionDescription->optionName.c_str() + std::string("__command__").size() << " ";
 	}
 }
 
