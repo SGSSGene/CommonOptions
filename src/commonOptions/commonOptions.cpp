@@ -38,25 +38,34 @@ bool parse(int argc, char const* const* argv) {
 		std::string arg = argv[i];
 		if (0 == arg.compare(0, 2, "--")) {
 			arg = arg.substr(2); // cut of first two symbols
-			std::transform(arg.begin(), arg.end(), arg.begin(), ::tolower);
-
-			std::string key   = arg;
-			std::string value = "true";
-
-			size_t equalSignPos = arg.find("=");
-			if (equalSignPos != std::string::npos) {
-				key   = arg.substr(0, equalSignPos);
-				value = arg.substr(equalSignPos+1);
-			} else if (i+1 < argc && std::string(argv[i+1]).compare(0, 2, "--" ) != 0) {
-				value = argv[i+1];
-				++i;
-			}
-			auto description = get_description(key);
-			description->changeDefaultValue(value, 1);
 		} else {
-			//std::cout << "ignoring: " << arg << std::endl;
+			arg = "__command__" + arg;
 		}
+		std::transform(arg.begin(), arg.end(), arg.begin(), ::tolower);
+
+		std::string key   = arg;
+		std::string value = "true";
+
+		size_t equalSignPos = arg.find("=");
+		if (equalSignPos != std::string::npos) {
+			key   = arg.substr(0, equalSignPos);
+			value = arg.substr(equalSignPos+1);
+		} else if (i+1 < argc && std::string(argv[i+1]).compare(0, 2, "--" ) != 0) {
+			value = argv[i+1];
+			++i;
+		}
+		auto description = get_description(key);
+		description->changeDefaultValue(value, 1);
 	}
+/*	if (commands.size() >= 1) {
+		auto cmdDescription = get_description("__command__" + commands[0]);
+		cmdDescription->changeDefaultValue("true", 1);
+
+		commands.erase(commands.begin());
+		auto filesDescription = get_description("__files__");
+		filesDescription->changeDefaultValue(serializer::yaml::writeAsString(commands), 1);
+	}*/
+
 	if (argc == 2 && std::string(argv[1]) == "__completion") {
 		printShellCompl();
 		exit(0);

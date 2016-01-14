@@ -27,6 +27,13 @@ auto make_option(Args const&... args) -> decltype(getRootSection()->make_option(
 inline auto make_switch(std::string const& _str, std::string const& _description) -> Switch& {
 	return getRootSection()->make_switch(_str, _description);
 }
+inline auto make_command(std::string const& _str, std::string const& _description) -> Switch& {
+	return getRootSection()->make_switch("__command__" + _str, _description);
+}
+template <typename ...Args>
+auto make_command(std::string const& _str, Args const&... args) -> decltype(getRootSection()->make_option(_str, args...)) {
+	return getRootSection()->make_option("__command__" + _str, args...);
+}
 
 inline auto get_option(std::string const& _str) -> BaseOption* {
 	return getRootSection()->getVariable(_str);

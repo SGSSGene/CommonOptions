@@ -15,7 +15,6 @@ BaseOption::BaseOption(Section* _section, std::string const& _name, ParaType _pa
 }
 
 BaseOption::~BaseOption() {
-
 }
 
 auto BaseOption::getSectionName() const -> std::string {
@@ -43,6 +42,33 @@ void BaseOption::createDescription(std::string const& _defaultValue, std::string
 		mOptionDescription->defaultValueLevel = 0;
 	}
 }
+void BaseOption::print() const {
+	bool isCommand = mName.find("__command__") == 0;
+
+	std::stringstream ss;
+	if (not isCommand) {
+		ss<<"--"<<mOptionDescription->optionName;
+	} else {
+		ss << mOptionDescription->optionName.c_str() + std::string("__command__").size();
+	}
+	if (mParaType != ParaType::None) {
+		ss<<" "<<mOptionDescription->defaultValue;
+	}
+	while(ss.str().length() < 32) {
+		ss<<" ";
+	}
+	ss<<mOptionDescription->description;
+	std::cout<<ss.str()<<std::endl;
+}
+void BaseOption::printShellCompl() const {
+	bool isCommand = mName.find("__command__") == 0;
+	if (not isCommand) {
+		std::cout << "--"<<mOptionDescription->optionName << " ";
+	} else {
+		std::cout << mOptionDescription->optionName.c_str() + std::string("--__command__").size() << " ";
+	}
+}
+
 
 
 }

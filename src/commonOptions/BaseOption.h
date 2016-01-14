@@ -25,8 +25,8 @@ public:
 	auto getParaType() const -> ParaType;
 	void createDescription(std::string const& _defaultValue, std::string const& _description);
 
-	virtual void print() const = 0;
-	virtual void printShellCompl() const = 0;
+	void print() const;
+	void printShellCompl() const;
 };
 
 }

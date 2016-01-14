@@ -1,8 +1,7 @@
 #pragma once
 
 
-#include <map>
-#include <memory>
+#include <functional>
 #include <string>
 
 
@@ -22,20 +21,8 @@ struct OptionDescription {
 	std::function<void()> onDefaultValueChange;
 	std::function<void()> onValueChange;
 
-	void changeDefaultValue(std::string const& _defaultValue, int _level) {
-		if (_level < defaultValueLevel) return;
-		defaultValueLevel = _level;
-		defaultValue = _defaultValue;
-		if (onDefaultValueChange) {
-			onDefaultValueChange();
-		}
-	}
-	void changeValue(std::string const& _value) {
-		value = _value;
-		if (onValueChange) {
-			onValueChange();
-		}
-	}
+	void changeDefaultValue(std::string const& _defaultValue, int _level);
+	void changeValue(std::string const& _value);
 };
 
 }

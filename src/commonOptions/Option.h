@@ -86,22 +86,6 @@ public:
 		mOptionDescription->value = serializer::yaml::writeAsString(mCurrentValue->value);
 		mOptionDescription->defaultValueActive = false;
 	}
-
-	void print() const override {
-		std::stringstream ss;
-		ss<<"--"<<mOptionDescription->optionName;
-		if (mParaType != ParaType::None) {
-			ss<<" "<<mOptionDescription->defaultValue;
-		}
-		while(ss.str().length() < 32) {
-			ss<<" ";
-		}
-		ss<<mOptionDescription->description;
-		std::cout<<ss.str()<<std::endl;
-	}
-	void printShellCompl() const override {
-		std::cout<<"--"<<mOptionDescription->optionName<<" ";
-	}
 };
 
 }
