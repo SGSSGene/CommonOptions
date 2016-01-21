@@ -34,6 +34,9 @@ template <typename ...Args>
 auto make_command(std::string const& _str, Args const&... args) -> decltype(getRootSection()->make_option(_str, args...)) {
 	return getRootSection()->make_option("__command__" + _str, args...);
 }
+inline auto make_section(std::string const& _str) -> decltype(get_section(_str)) {
+	return get_section(_str);
+}
 
 inline auto get_option(std::string const& _str) -> BaseOption* {
 	return getRootSection()->getVariable(_str);

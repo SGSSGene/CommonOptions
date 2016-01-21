@@ -47,14 +47,17 @@ void BaseOption::print() const {
 
 	std::stringstream ss;
 	if (not isCommand) {
-		ss<<"--"<<mOptionDescription->optionName;
+		ss<<"--";
+		ss<<mSection->fullName();
+		ss<<mOptionDescription->optionName;
 	} else {
+		ss<<mSection->fullName();
 		ss << mOptionDescription->optionName.c_str() + std::string("__command__").size();
 	}
 	if (mParaType != ParaType::None) {
 		ss<<" "<<mOptionDescription->defaultValue;
 	}
-	while(ss.str().length() < 32) {
+	while(ss.str().length() < 42) {
 		ss<<" ";
 	}
 	ss<<mOptionDescription->description;
@@ -63,8 +66,11 @@ void BaseOption::print() const {
 void BaseOption::printShellCompl() const {
 	bool isCommand = mName.find("__command__") == 0;
 	if (not isCommand) {
-		std::cout << "--"<<mOptionDescription->optionName << " ";
+		std::cout << "--";
+		std::cout << mSection->fullName();
+		std::cout << mOptionDescription->optionName << " ";
 	} else {
+		std::cout << mSection->fullName();
 		std::cout << mOptionDescription->optionName.c_str() + std::string("__command__").size() << " ";
 	}
 }
