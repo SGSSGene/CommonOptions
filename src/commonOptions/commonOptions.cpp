@@ -1,4 +1,5 @@
 #include "commonOptions.h"
+#include "Option.h"
 
 namespace commonOptions {
 
@@ -50,9 +51,16 @@ bool parse(int argc, char const* const* argv) {
 		if (equalSignPos != std::string::npos) {
 			key   = arg.substr(0, equalSignPos);
 			value = arg.substr(equalSignPos+1);
+		} else if (has_key(key) and get_option(key)->isListType()) {
+			if (i+1 < argc) {
+				value = argv[++i];
+				while (i+1 < argc) {
+					value += std::string(", ") + argv[++i];
+				}
+			}
+			value = "[" + value + "]";
 		} else if (i+1 < argc && std::string(argv[i+1]).compare(0, 2, "--" ) != 0) {
-			value = argv[i+1];
-			++i;
+			value = argv[++i];
 		}
 		auto description = get_description(key);
 		description->changeDefaultValue(value, 1);

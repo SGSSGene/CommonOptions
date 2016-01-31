@@ -20,6 +20,21 @@ struct CurrentValue {
 	T    value;
 };
 
+template<typename ...Args>
+struct testListType {
+	constexpr static bool value = false;
+};
+template<typename T>
+struct testListType<std::vector<T>> {
+	constexpr static bool value = true;
+};
+template<typename T>
+struct testListType<std::list<T>> {
+	constexpr static bool value = true;
+};
+
+
+
 /**
  * This type must be convertable by using stringstream
  */
@@ -71,6 +86,10 @@ public:
 	T const& operator*() const {
 		return mCurrentValue->value;
 	}
+	bool isListType() const override {
+		return testListType<T>::value;
+	}
+	
 
 	void resetToDefault() {
 		mOptionDescription->defaultValueActive = true;

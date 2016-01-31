@@ -27,6 +27,8 @@ public:
 
 	void print() const;
 	void printShellCompl() const;
+
+	virtual bool isListType() const { return false; }
 };
 
 }
