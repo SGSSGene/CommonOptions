@@ -29,9 +29,6 @@ int main(int argc, char** argv) {
 }
 
 SELFTEST(Test1, "", 0, "", "")
-SELFTEST(Test2, "--help", 0, "--help                          prints this help\n"
-                             "--para1 0                       an option\n"
-                             "--para2                         just a simple switch\n", "")
-
-
-
+SELFTEST(Test2, "--help", 0, "--help                                    prints this help\n"
+                             "--para1 0                                 an option\n"
+                             "--para2                                   just a simple switch\n", "")
