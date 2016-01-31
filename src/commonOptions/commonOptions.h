@@ -44,5 +44,9 @@ inline auto get_option(std::string const& _str) -> BaseOption* {
 inline auto get_description(std::string const& _str) -> OptionDescription* {
 	return getRootSection()->getDescription(_str);
 }
+inline bool has_key(std::string const& _str) {
+	return getRootSection()->hasKey(_str);
+}
+
 
 }

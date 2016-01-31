@@ -76,6 +76,14 @@ auto Section::getDescription(std::string const& _name) -> OptionDescription* {
 	}
 	return mDescriptions.at(_name).get();
 }
+bool Section::hasKey(std::string const& _name) {
+	auto p  = getSectionOfVariable(_name);
+	if (p.first != this) {
+		return p.first->hasKey(p.second);
+	}
+	return mVariables.find(_name) != mVariables.end();
+}
+
 
 
 

@@ -34,6 +34,7 @@ private:
 public:
 	auto getVariable(std::string const& _name) -> BaseOption*;
 	auto getDescription(std::string const& _name) -> OptionDescription*;
+	bool hasKey(std::string const& _name);
 
 	Section* accessChild(std::string const& _name);
 
