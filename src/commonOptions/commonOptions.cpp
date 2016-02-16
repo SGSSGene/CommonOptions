@@ -42,8 +42,6 @@ bool parse(int argc, char const* const* argv) {
 		} else {
 			arg = "__command__" + arg;
 		}
-		std::transform(arg.begin(), arg.end(), arg.begin(), ::tolower);
-
 		std::string key   = arg;
 		std::string value = "true";
 

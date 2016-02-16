@@ -11,7 +11,6 @@ public:
 		mParaType = ParaType::None;
 
 		auto _name = getSectionName() + _varName;
-		std::transform(_name.begin(), _name.end(), _name.begin(), ::tolower);
 	}
 
 	operator bool() {

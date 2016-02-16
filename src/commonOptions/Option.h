@@ -56,7 +56,6 @@ public:
 		possibleValues.insert(_default);
 
 		auto _name = getSectionName() + _varName;
-		std::transform(_name.begin(), _name.end(), _name.begin(), ::tolower);
 
 		createDescription(serializer::yaml::writeAsString(_default), _description);
 
