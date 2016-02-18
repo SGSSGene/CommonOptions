@@ -2,7 +2,7 @@
  *
  * This examples shows how to parse options on the command line
  */
-#include "commonOptions/commonOptions.h"
+#include <commonOptions/commonOptions.h>
 #include <selfTest/selfTest.h>
 #include <iostream>
 #include <vector>
