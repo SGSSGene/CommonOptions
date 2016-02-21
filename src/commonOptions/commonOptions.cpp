@@ -92,6 +92,8 @@ void loadFile(std::string const& _file) {
 	}
 }
 
+/** if _includingSections is empty, include them all
+ */
 void saveFile(std::string const& _file, std::vector<std::string> const& _includingSections) {
 	std::map<std::string, std::string> options;
 
@@ -102,6 +104,9 @@ void saveFile(std::string const& _file, std::vector<std::string> const& _includi
 	// collecting all sections (to remove duplicates)
 	for (auto const& sectName : _includingSections) {
 		sectionsToProcess.push(get_section(sectName));
+	}
+	if (_includingSections.empty()) {
+		sectionsToProcess.push(getRootSection());
 	}
 	while (not sectionsToProcess.empty()) {
 		auto sect = sectionsToProcess.front();
