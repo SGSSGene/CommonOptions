@@ -52,18 +52,18 @@ public:
 	}
 
 	template<typename T>
-	auto make_option(std::string const& _str, T _default, std::set<T> const& _selection, std::string const& _description) -> Option<T>& {
+	auto make_option(std::string const& _str, T _default, std::vector<T> _selection, std::string const& _description) -> Option<T>& {
 		auto v = getSectionOfVariable(_str);
 		if (v.first != this) {
-			return v.first->make_option(v.second, _default, _selection, _description);
+			return v.first->make_option(v.second, _default, std::move(_selection), _description);
 		}
 		if (mVariables.find(v.second) == mVariables.end()) {
-			mVariables[v.second].reset(new Option<T>(this, v.second, _default, _selection, _description));
+			mVariables[v.second].reset(new Option<T>(this, v.second, _default, std::move(_selection), _description));
 		}
 		return dynamic_cast<Option<T>&>(*mVariables.at(v.second));
 	}
-	auto make_option(std::string const& _str, char const* _default, std::set<std::string> const& _selection, std::string const& _description) -> Option<std::string>& {
-		return make_option<std::string>(_str, _default, _selection, _description);
+	auto make_option(std::string const& _str, char const* _default, std::vector<std::string> _selection, std::string const& _description) -> Option<std::string>& {
+		return make_option<std::string>(_str, _default, std::move(_selection), _description);
 	}
 
 

@@ -41,19 +41,19 @@ struct testListType<std::list<T>> {
 template<typename T>
 class Option : public BaseOption {
 private:
-	bool               onlyPossibleValues;
-	std::set<T>        possibleValues;
-	std::shared_ptr<CurrentValue<T>>   mCurrentValue;
+	bool                             onlyPossibleValues;
+	std::vector<T>                   possibleValues;
+	std::shared_ptr<CurrentValue<T>> mCurrentValue;
 public:
 	Option(Section* _section, std::string const& _name, T _default, std::string const& _description)
 		: Option(_section, _name, _default, {}, _description) {
 	}
-	Option(Section* _section, std::string const& _varName, T _default, std::set<T> const& _list, std::string const& _description)
+	Option(Section* _section, std::string const& _varName, T _default, std::vector<T> _list, std::string const& _description)
 		: BaseOption(_section, _varName, commonOptions::getParaType<T>())
 	{
 		onlyPossibleValues = not _list.empty();
-		possibleValues = _list;
-		possibleValues.insert(_default);
+		possibleValues = std::move(_list);
+		possibleValues.push_back(_default);
 
 		auto _name = getSectionName() + _varName;
 
@@ -88,7 +88,7 @@ public:
 	bool isListType() const override {
 		return testListType<T>::value;
 	}
-	
+
 
 	void resetToDefault() {
 		mOptionDescription->defaultValueActive = true;
