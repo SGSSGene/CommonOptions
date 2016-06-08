@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Switch.h"
 #include "Section.h"
+#include "Singleton.h"
+#include "Switch.h"
 #include "utils.h"
 
 namespace commonOptions {
@@ -37,6 +38,16 @@ auto make_command(std::string const& _str, Args const&... args) -> decltype(getR
 inline auto make_section(std::string const& _str) -> decltype(get_section(_str)) {
 	return get_section(_str);
 }
+inline auto register_on_before_save(std::function<void()> _callback) -> decltype (Singleton::getInstance().register_on_before_save(_callback)) {
+	return Singleton::getInstance().register_on_before_save(_callback);
+}
+inline auto register_on_save(std::function<void()> _callback) -> decltype (Singleton::getInstance().register_on_save(_callback)) {
+	return Singleton::getInstance().register_on_save(_callback);
+}
+inline void signal_save() {
+	Singleton::getInstance().signal_save();
+}
+
 
 inline auto get_option(std::string const& _str) -> BaseOption* {
 	return getRootSection()->getVariable(_str);
