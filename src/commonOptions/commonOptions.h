@@ -44,6 +44,10 @@ inline auto register_on_before_save(std::function<void()> _callback) -> decltype
 inline auto register_on_save(std::function<void()> _callback) -> decltype (Singleton::getInstance().register_on_save(_callback)) {
 	return Singleton::getInstance().register_on_save(_callback);
 }
+inline auto register_on_load(std::function<void()> _callback) -> decltype (Singleton::getInstance().register_on_load(_callback)) {
+	return Singleton::getInstance().register_on_load(_callback);
+}
+
 inline void signal_save() {
 	Singleton::getInstance().signal_save();
 }

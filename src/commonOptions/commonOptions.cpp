@@ -90,6 +90,7 @@ void loadFile(std::string const& _file) {
 		desc->changeValue(o.second);
 		desc->defaultValueActive = false;
 	}
+	Singleton::getInstance().signal_load();
 }
 
 /** if _includingSections is empty, include them all
