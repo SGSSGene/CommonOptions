@@ -2,3 +2,6 @@ name: CommonOptions
 extDependencies:
   - url: git@cakeface.de:aBuild/SelfTest
   - url: git@cakeface.de:aBuild/Serializer
+extRepositories:
+  - url: git@cakeface.de:aBuild/SelfTest
+  - url: git@cakeface.de:aBuild/Serializer
