@@ -66,12 +66,12 @@ public:
 			serializer::yaml::readFromString(mOptionDescription->value, mCurrentValue->value);
 		}
 
-		mOptionDescription->onDefaultValueChange = [&] {
+		mOptionDescription->onDefaultValueChange = [=] {
 			if (mOptionDescription->defaultValueActive) {
 				serializer::yaml::readFromString(mOptionDescription->defaultValue, mCurrentValue->value);
 			}
 		};
-		mOptionDescription->onValueChange = [&] {
+		mOptionDescription->onValueChange = [=] {
 			if (mOptionDescription->defaultValueActive) {
 				serializer::yaml::readFromString(mOptionDescription->value, mCurrentValue->value);
 			}
