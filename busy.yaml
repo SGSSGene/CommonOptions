@@ -1,4 +1,4 @@
 name: CommonOptions
 extRepositories:
-  - url: git@github.com:SGSSGene/SelfTest.git
-  - url: git@github.com:SGSSGene/Serializer.git
+  - url: https://github.com/SGSSGene/SelfTest.git
+  - url: https://github.com/SGSSGene/Serializer.git
