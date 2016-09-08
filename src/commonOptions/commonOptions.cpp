@@ -148,5 +148,21 @@ Section* getRootSection() {
 	return &singleton;
 }
 
+auto getUnmatchedParameters() -> std::vector<std::string> {
+	std::vector<std::string> missing;
 
+	std::set<std::string> available;
+	auto variables = commonOptions::getRootSection()->getVariables();
+	for (auto v : variables) {
+		available.insert(v->getSectionName() + v->getName());
+	}
+
+	auto descriptions = commonOptions::getRootSection()->getAllDescriptions();
+	for (auto const& d : descriptions) {
+		if (available.count(d.first) == 0) {
+			missing.push_back(d.first);
+		}
+	}
+	return missing;
+}
 }

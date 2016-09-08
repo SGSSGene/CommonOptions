@@ -38,6 +38,11 @@ auto Section::getDescriptions() const -> std::map<std::string, std::unique_ptr<O
 	return mDescriptions;
 }
 
+auto Section::getAllDescriptions() const -> std::map<std::string, OptionDescription const*> {
+	std::map<std::string, OptionDescription const*> descriptions;
+	getAllDescriptionsImpl(descriptions);
+	return descriptions;
+}
 
 void Section::getVariablesImpl(std::vector<BaseOption*>* options) {
 	for (auto& p : mVariables) {
@@ -45,6 +50,14 @@ void Section::getVariablesImpl(std::vector<BaseOption*>* options) {
 	}
 	for (auto& child : mChildren) {
 		child.second.getVariablesImpl(options);
+	}
+}
+void Section::getAllDescriptionsImpl(std::map<std::string, OptionDescription const*>& _descriptions) const {
+	for (auto const& d : mDescriptions) {
+		_descriptions[fullName() + d.first] = d.second.get();
+	}
+	for (auto const& child : mChildren) {
+		child.second.getAllDescriptionsImpl(_descriptions);
 	}
 }
 

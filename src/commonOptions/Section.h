@@ -29,8 +29,12 @@ public:
 	auto getChildren() -> std::map<std::string, Section>&;
 	auto getDescriptions() const -> std::map<std::string, std::unique_ptr<OptionDescription>> const&;
 
+	auto getAllDescriptions() const -> std::map<std::string, OptionDescription const*>;
+
 private:
 	void getVariablesImpl(std::vector<BaseOption*>* options);
+	void getAllDescriptionsImpl(std::map<std::string, OptionDescription const*>& _descriptions) const;
+
 public:
 	auto getVariable(std::string const& _name) -> BaseOption*;
 	auto getDescription(std::string const& _name) -> OptionDescription*;
@@ -74,7 +78,9 @@ public:
 			return v.first->make_option(v.second, _default, _description);
 		}
 		if (mVariables.find(v.second) == mVariables.end()) {
-			mVariables[v.second].reset(new Option<T>(this, v.second, _default, _description));
+			auto description = getDescription(_str);
+			auto ptr = new Option<T>(this, v.second, _default, _description);
+			mVariables[v.second].reset(ptr);
 		}
 		return dynamic_cast<Option<T>&>(*mVariables.at(v.second));
 	}

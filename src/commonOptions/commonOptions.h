@@ -63,5 +63,6 @@ inline bool has_key(std::string const& _str) {
 	return getRootSection()->hasKey(_str);
 }
 
+auto getUnmatchedParameters() -> std::vector<std::string>;
 
 }
