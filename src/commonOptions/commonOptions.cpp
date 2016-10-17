@@ -126,7 +126,10 @@ void saveFile(std::string const& _file, std::vector<std::string> const& _includi
 			auto name = fullName + description.second->optionName;
 			if (not description.second->defaultValueActive) {
 				auto const* d = description.second.get();
-				options[name] = d->value;
+				// TODO hack, if value looks like default value, don't save it
+				if (description.second->defaultValue != d->value) {
+					options[name] = d->value;
+				}
 			}
 		}
 	}
