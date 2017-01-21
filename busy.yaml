@@ -1,4 +1,4 @@
 name: CommonOptions
 extRepositories:
-  - url: https://github.com/SGSSGene/SelfTest.git
-  - url: https://github.com/SGSSGene/Serializer.git
+  - url: git@cakeface.de:SGSSGene/SelfTest
+  - url: git@cakeface.de:SGSSGene/Serializer
