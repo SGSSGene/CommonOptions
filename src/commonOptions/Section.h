@@ -78,7 +78,6 @@ public:
 			return v.first->make_option(v.second, _default, _description);
 		}
 		if (mVariables.find(v.second) == mVariables.end()) {
-			auto description = getDescription(_str);
 			auto ptr = new Option<T>(this, v.second, _default, _description);
 			mVariables[v.second].reset(ptr);
 		}
